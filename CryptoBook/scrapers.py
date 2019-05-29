@@ -51,7 +51,6 @@ async def scraper_historical_data(symbol, ex, timeframe, start, end):
         current = df[-1:]['Time'].iloc[0]
         data_start = data_start + timedelta(microseconds=current)
 
-
     # Cuts off the DataFrame at the ending time.
     df = df[df.Time <= exchange.parse8601(data_end.isoformat())]
 
