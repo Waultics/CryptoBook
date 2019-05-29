@@ -1,0 +1,6 @@
+ccxt
+sanic
+pyyaml
+aiohttp
+pandas
+datetime
