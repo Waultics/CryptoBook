@@ -20,6 +20,7 @@ CryptoBook offers the following endpoints:
 * `POST`
     * `symbol`: Symbol being looked for (i.e. `BTC\ETH`)
     * `exchange`: Exchange to retrieve historical data from. (i.e. `binance`)
+        * Use `id` posted in the `ccxt` documentation, [here](https://github.com/ccxt/ccxt#supported-cryptocurrency-exchange-markets).
     * `timeframe`: Interval of the data. (i.e. `1m`)
     * `start`: Start date to retrieve data from. (i.e. `2018-01-01 00:00:00`)
     * `end`: End date of the retrieval period. (i.e. `2018-05-01 00:00:00`)
