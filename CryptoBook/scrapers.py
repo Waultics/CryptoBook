@@ -4,7 +4,28 @@ import pandas as pd
 import asyncio
 import ccxt
 
-async def scraper_historical_data(symbol, ex, timeframe, start, end):
+
+async def exchange_info(ex):
+    """ Returns informaton about the given exchange. """
+
+    # Checks to see if the exchange is valid.
+    try:
+        exchange = getattr (ccxt, ex) ()
+    except AttributeError:
+        return {'error': 'exchange_error',
+                'description': "Exchange {} not found. Please check the exchange is supported with ccxt.".format(ex)}
+
+    # Loads the market.
+    exchange.load_markets()
+
+    # Returns the information.
+    return { 'exchange': ex,
+             'symbols': exchange.symbols,
+             'timeframes': exchange.timeframes,
+             'historical': exchange.has['fetchOHLCV']}
+
+
+async def historical_data(symbol, ex, timeframe, start, end):
     """ Returns historical data of any market. """
 
     # Checks to see if the exchange is valid.
