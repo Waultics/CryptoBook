@@ -9,13 +9,12 @@ A small RESTful API build on top of [`Sanic`](https://github.com/huge-success/sa
 CryptoBook offers the following endpoints:
 
 ### Debug
-#### `/api/cryptobook/debug/ip`
-
+#### `/api/v1/cryptobook/debug/ip`
 * `GET`
     * Returns the external IP of the server. Good for proxy setting tests.
 
 ### Scrapers
-#### `/api/cryptobook/historical`
+#### `/api/v1/cryptobook/historical`
 
 * `POST`
     * `symbol`: Symbol being looked for (i.e. `BTC\ETH`)

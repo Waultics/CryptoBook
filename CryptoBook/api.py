@@ -7,12 +7,12 @@ import os
 
 app = Sanic()
 
-@app.route('/api/cryptobook/debug/ip')
+@app.route('/api/v1/cryptobook/debug/ip')
 async def test(request):
     """ Returns the public IP address of the API server. """
     return json(await get_ip())
 
-@app.route('/api/cryptobook/historical', methods=["POST"])
+@app.route('/api/v1/cryptobook/historical', methods=["POST"])
 async def historical(request):
     return json(await scraper_historical_data(symbol=request.json['symbol'],
                                               ex=request.json['exchange'],
