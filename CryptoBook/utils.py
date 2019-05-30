@@ -1,9 +1,17 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from dateutil.parser import parse
 import pandas as pd
 import asyncio
+import aiohttp
 import ccxt
 
+async def get_ip():
+    """ Returns the external IP of the server. """
+
+    # Grabs external IP address from ipify.org.
+    async with aiohttp.ClientSession(trust_env=True) as session:
+        async with session.get("https://api.ipify.org?format=json") as response:
+            return await response.json()
 
 async def exchange_info(ex):
     """ Returns informaton about the given exchange. """
@@ -23,7 +31,6 @@ async def exchange_info(ex):
              'symbols': exchange.symbols,
              'timeframes': exchange.timeframes,
              'historical': exchange.has['fetchOHLCV']}
-
 
 async def historical_data(symbol, ex, timeframe, start, end):
     """ Returns historical data of any market. """

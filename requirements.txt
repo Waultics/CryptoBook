@@ -3,4 +3,4 @@ sanic
 pyyaml
 aiohttp
 pandas
-datetime
+cerberus
