@@ -55,6 +55,7 @@ async def historical_data(symbol, ex, timeframe, start, end):
 
     # Loads the market.
     exchange.load_markets()
+    exchange.enableRateLimit = False
 
     # Check to see if the symbol is available on the exchange.
     if symbol not in exchange.symbols:
