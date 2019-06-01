@@ -1,4 +1,4 @@
-from cerberus import Validator
+from cerberus import Validator, DocumentError
 from datetime import datetime
 
 def check_historical_data(request):
@@ -12,7 +12,10 @@ def check_historical_data(request):
                 'start': {'type': 'datetime', 'coerce': date},
                 'end': {'type': 'datetime', 'coerce': date}}
 
-    if v.validate(request):
-        return True, {}
-    else:
-        return False, v.errors
+    try:
+        if v.validate(request):
+            return True, {}
+        else:
+            return False, v.errors
+    except DocumentError:
+        return False, {'Document is missing.'}
