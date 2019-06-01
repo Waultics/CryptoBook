@@ -83,7 +83,4 @@ async def historical_data(symbol, ex, timeframe, start, end):
     # Cuts off the DataFrame at the ending time.
     df = df[df.Time <= exchange.parse8601(data_end.isoformat())]
 
-    # Converts the df Timestamp column into DateTime objects.
-    df['Time'] = pd.to_datetime(df['Time'], unit='ms')
-
     return df.to_json()
