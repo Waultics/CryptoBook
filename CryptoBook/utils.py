@@ -6,7 +6,7 @@ import aiohttp
 import ccxt
 
 async def get_ip():
-    """ Returns the external IP of the server. """
+    """ Fetches and returns the external IP of the server for testing purposes. """
 
     # Grabs external IP address from ipify.org.
     async with aiohttp.ClientSession(trust_env=True) as session:
@@ -16,7 +16,14 @@ async def get_ip():
 # @todo Replace the market input var `ex` to `exchange` in 'exchange_info' function.
 # @body For better code use it would be best to replace 'ex' with exchange.
 async def exchange_info(ex):
-    """ Returns informaton about the given exchange. """
+    """ Fetches and returns relevant information about an exchange for historical data fetch.
+
+    Args:
+        ex (str): The name of the exchange.
+
+    Returns:
+        str: JSON data with market exchange information.
+    """
 
     # Checks to see if the exchange is valid.
     try:
@@ -37,7 +44,18 @@ async def exchange_info(ex):
 # @todo Replace the market input var 'ex' to 'exchange' in 'historical_data' function.
 # @body For better code use it would be easier to have the `ex` param to be placed first, and be changed to `exchange`.
 async def historical_data(symbol, ex, timeframe, start, end):
-    """ Returns historical data of any market. """
+    """ Returns historical data of any market.
+
+    Args:
+        symbol (str): The exchange symbol one desires.
+        ex (str): The name of the exchange.
+        timeframe (str): Timeframe of the data.
+        start (str): Beginning date and time of the data.
+        end (str): Ending date and time of the data.
+
+    Returns:
+        str: JSON data with market exchange information.
+    """
 
     # Checks to see if the exchange is valid.
     try:
