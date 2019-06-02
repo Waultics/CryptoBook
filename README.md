@@ -18,11 +18,11 @@ Documentation can be found at the following link.
 ## Requirements
 
 * Python **3.6** or higher.
-* `aiohttp <https://pypi.python.org/pypi/aiohttp>`_
-* `ccxt <https://github.com/ccxt/ccxt>`_
-* `ppyaml <https://github.com/yaml/pyyaml>`_
-* `pandas <https://github.com/pandas-dev/pandas>`_
-* `cerberus <https://github.com/pyeve/cerberus>`_
+* [aiohttp](https://pypi.python.org/pypi/aiohttp>)
+* [ccxt](https://github.com/ccxt/ccxt>)
+* [ppyaml](https://github.com/yaml/pyyaml>)
+* [pandas](https://github.com/pandas-dev/pandas>)
+* [cerberus](https://github.com/pyeve/cerberus>)
 
 
 ---
