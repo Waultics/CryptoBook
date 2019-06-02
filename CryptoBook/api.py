@@ -1,5 +1,5 @@
-from .utils import get_ip, exchange_info, historical_data
-from .validators import check_historical_data
+from utils import get_ip, exchange_info, historical_data
+from validators import check_historical_data
 
 from sanic.response import json
 from sanic import Sanic
