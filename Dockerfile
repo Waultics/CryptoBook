@@ -7,12 +7,12 @@ EXPOSE 9900
 WORKDIR /usr/src/app/CryptoBook
 
 # Copies our project and its requirements.txt over to the dir above.
-COPY requirements.txt .
+COPY requirements/base.txt .
 COPY config.yml .
 COPY CryptoBook/ ./CryptoBook
 
 # Installs the requirements of our project.
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r base.txt
 
 # Runs the API when the container is ran.
 CMD [ "python", "CryptoBook/api.py" ]

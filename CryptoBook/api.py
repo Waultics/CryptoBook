@@ -1,5 +1,5 @@
-from .utils import get_ip, exchange_info, historical_data
-from .validators import check_historical_data
+from utils import get_ip, exchange_info, historical_data
+from validators import check_historical_data
 
 from sanic.response import json
 from sanic import Sanic
@@ -13,11 +13,15 @@ async def api_get_ip(request):
     """ Returns the public IP address of the API server. """
     return json(await get_ip())
 
+# @todo Return exchange info with status code.
+# @body Function requires a proper status code return. Info [here](https://sanic.readthedocs.io/en/latest/sanic/response.html#modify-headers-or-status).
 @app.route('/api/v1/cryptobook/exchange/<exchange_name:[A-z]+>')
 async def api_exchange_info(request, exchange_name):
     """ Returns information about the exchange. """
     return json(await exchange_info(exchange_name))
 
+# @todo Return historical data with status code.
+# @body Function requires a proper status code return. Info [here](https://sanic.readthedocs.io/en/latest/sanic/response.html#modify-headers-or-status).
 @app.route('/api/v1/cryptobook/historical', methods=["POST"])
 async def api_historical_data(request):
     """ Returns historical exchange data. """
