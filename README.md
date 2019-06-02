@@ -3,7 +3,7 @@
   <br>
 </p>
 
-[![Travis](https://travis-ci.com/Waultics/CryptoBook.svg?branch=master)](https://travis-ci.com/Waultics/CryptoBook) [![Coverage Status](https://coveralls.io/repos/github/Waultics/CryptoBook/badge.svg?branch=master)](https://coveralls.io/github/Waultics/CryptoBook?branch=master)[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Travis](https://travis-ci.com/Waultics/CryptoBook.svg?branch=master)](https://travis-ci.com/Waultics/CryptoBook) [![Documentation Status](https://readthedocs.org/projects/cryptobook/badge/?version=latest)](https://cryptobook.readthedocs.io/en/latest/?badge=latest) [![Coverage Status](https://coveralls.io/repos/github/Waultics/CryptoBook/badge.svg?branch=master)](https://coveralls.io/github/Waultics/CryptoBook?branch=master) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A RESTful API project that allows easy gathering of historical and live cryptocurrency data with ease. To be utilized as a microservice for larger projects.
 
@@ -11,7 +11,7 @@ A RESTful API project that allows easy gathering of historical and live cryptocu
 
 ## Documentation
 
-Documentation can be found at the following link.
+Documentation can be found at the following [link](https://cryptobook.readthedocs.io/en/latest/).
 
 ---
 
