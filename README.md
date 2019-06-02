@@ -1,6 +1,6 @@
 # 📚 CryptoBook
 
-![Travis](https://travis-ci.com/Waultics/CryptoBook.svg?branch=master)
+[![Travis](https://travis-ci.com/Waultics/CryptoBook.svg?branch=master)](https://travis-ci.com/Waultics/CryptoBook) [![Coverage Status](https://coveralls.io/repos/github/Waultics/CryptoBook/badge.svg?branch=master)](https://coveralls.io/github/Waultics/CryptoBook?branch=master)
 
 A small RESTful API build on top of [`Sanic`](https://github.com/huge-success/sanic) that utilizes [`CryptoCurrency eXchange Trading Library (ccxt)`](https://github.com/ccxt/ccxt) and [`CoinMarketCap Historical Data Retrieval (cmc)`](https://github.com/Alescontrela/coinmarketcap-history/) to serve historical market information.
 
