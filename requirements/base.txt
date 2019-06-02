@@ -4,6 +4,3 @@ pyyaml
 aiohttp
 pandas
 cerberus
-pytest
-pytest-asyncio
-pytest-sanic

@@ -1,0 +1,14 @@
+ccxt
+sanic
+pyyaml
+aiohttp
+pandas
+cerberus
+
+pytest
+pytest-asyncio
+pytest-sanic
+
+sphinx
+sphinxcontrib.httpdomain
+m2r
