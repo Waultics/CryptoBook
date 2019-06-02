@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="460" src="./assets/CryptoBook Header.png">
+  <img height="280" src="./assets/CryptoBook Box.png">
   <br>
 </p>
 
