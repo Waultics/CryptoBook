@@ -64,3 +64,4 @@ To use proxies with CryptoBook it is recommended to use [Frontman](https://githu
 - [ ] Add the `cmc` library after PyPi update.
 - [x] Create `GET` methods for exchange information like `symbol` and `timeframe`.
 - [x] Expand on the error throwing checks for `start` and `end` inside the `scraper_historical_data()`.
+- [x] Create tests and add TravisCI to the project.
