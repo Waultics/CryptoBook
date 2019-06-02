@@ -27,12 +27,8 @@ Latest development version can be installed straight from Github.
 
 .. code-block:: bash
 
-    $ pip install -U git+https://github.com/constverum/ProxyBroker.git
-
-You may run CryptoBook directly on your host machine.
-
-.. code-block:: bash
-
+    $ pip install -U git+https://github.com/Waultics/CryptoBook.git
+    cd CryptBook
     $ python CryptoBook/api.py
 
 It is recommended, however, to utilize Docker to run CryptoBook.
@@ -41,6 +37,12 @@ It is recommended, however, to utilize Docker to run CryptoBook.
 
     $ docker build -t cryptobook .
     $ docker run -p 9900:9900 -t cryptobook
+
+
+Using Proxies
+--------------
+
+To use proxies with CryptoBook it is recommended to use `Frontman <https://github.com/synchronizing/Frontman>`_, which wraps `ProxyBroker <https://github.com/constverum/ProxyBroker>`_ in a customizable docker container. ProxyBroker allows the creation of a local proxy server that routes internet traffic through filtered and working proxies. You will then have to create a `docker-compose.yml` file to set the `http_proxy` and `https_proxy` environment variables for CryptoBook, and link each container (further instructions in the Frontman repo).
 
 
 Contributing
