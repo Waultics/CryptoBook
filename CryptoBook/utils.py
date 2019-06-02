@@ -13,6 +13,8 @@ async def get_ip():
         async with session.get("https://api.ipify.org?format=json") as response:
             return await response.json()
 
+# @todo Replace the market input var `ex` to `exchange` in 'exchange_info' function.
+# @body For better code use it would be best to replace 'ex' with exchange.
 async def exchange_info(ex):
     """ Returns informaton about the given exchange. """
 
@@ -32,6 +34,8 @@ async def exchange_info(ex):
              'timeframes': exchange.timeframes,
              'historical': exchange.has['fetchOHLCV']}
 
+# @todo Replace the market input var 'ex' to 'exchange' in 'historical_data' function.
+# @body For better code use it would be easier to have the `ex` param to be placed first, and be changed to `exchange`.
 async def historical_data(symbol, ex, timeframe, start, end):
     """ Returns historical data of any market. """
 
