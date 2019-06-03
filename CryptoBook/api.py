@@ -8,6 +8,13 @@ import os
 
 app = Sanic()
 
+def load_config():
+    """ Loads the config file and runs the Sanic app. """
+    with open("config.yml", 'r') as ymlfile:
+        config = yaml.safe_load(ymlfile)
+
+    return config['host'], config['port']
+
 @app.route('/api/v1/cryptobook/ip')
 async def api_get_ip(request):
     """ Returns the public IP address of the API server. """
@@ -38,8 +45,7 @@ async def api_historical_data(request):
                                           exchange_object = response['exchange-object']),
                                           status=200)
 
-if __name__ == '__main__':
-    with open("config.yml", 'r') as ymlfile:
-        config = yaml.safe_load(ymlfile)
-
+# 'pragma' line below insures Coverall does not bother checking this function for coverage.
+if __name__ == '__main__': # pragma: no cover
+    host, port = load_config()
     app.run(host=config['host'], port=config['port'])
