@@ -18,6 +18,7 @@ async def exchange_info(exchange, exchange_object=None):
 
     Args:
         exchange (str): The name of the exchange.
+        exchange_object (ccxt.Exchange): Optional ccxt.Exchange object with user-set configuration. If not passed, function will initialize a fresh ccxt.Exchange object.
 
     Returns:
         str: JSON data with market exchange information.
