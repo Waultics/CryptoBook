@@ -9,3 +9,6 @@ __pycache__
 
 # Sphinx
 docs/_build/
+
+# Pyenv + Virtualenv
+.python-version
