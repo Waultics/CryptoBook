@@ -13,30 +13,26 @@ async def api_get_ip(request):
     """ Returns the public IP address of the API server. """
     return json(await get_ip())
 
-# @todo Return exchange info with status code.
-# @body Function requires a proper status code return. Info [here](https://sanic.readthedocs.io/en/latest/sanic/response.html#modify-headers-or-status).
 @app.route('/api/v1/cryptobook/exchange/<exchange_name:[A-z]+>')
 async def api_exchange_info(request, exchange_name):
     """ Returns information about the exchange. """
-    return json(await exchange_info(exchange_name))
+    return json(await exchange_info(exchange = exchange_name), status=200)
 
-# @todo Return historical data with status code.
-# @body Function requires a proper status code return. Info [here](https://sanic.readthedocs.io/en/latest/sanic/response.html#modify-headers-or-status).
 @app.route('/api/v1/cryptobook/historical', methods=["POST"])
 async def api_historical_data(request):
     """ Returns historical exchange data. """
 
-    valid_request, errors = check_historical_data(request.json)
+    valid_request, response = check_historical_data(request.json)
     if not valid_request:
-        return json({'error': 'invalid_request',
-                     'description': 'The server received the request, but the request was invalid.',
-                     'keys': errors})
+        return response
     else:
-        return json(await historical_data(symbol=request.json['symbol'],
-                                          ex=request.json['exchange'],
+        return json(await historical_data(exchange=request.json['exchange'],
+                                          symbol=request.json['symbol'],
                                           timeframe=request.json['timeframe'],
                                           start=request.json['start'],
-                                          end=request.json['end']))
+                                          end=request.json['end'],
+                                          exchange_object = response['exchange-object']),
+                                          status=200)
 
 if __name__ == '__main__':
     file = "../config.yml" if os.path.isfile("../config.yml") else "config.yml"

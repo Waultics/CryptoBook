@@ -25,7 +25,7 @@ External IP
         Keep-Alive: 5
 
         {
-            "ip": "24.51.195.17"
+            "ip": "31.23.52.17"
         }
 
 Exchange Information
