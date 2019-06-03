@@ -13,7 +13,7 @@ async def get_ip():
         async with session.get("https://api.ipify.org?format=json") as response:
             return await response.json()
 
-async def exchange_info(exchange):
+async def exchange_info(exchange, exchange_object=None):
     """ Fetches and returns relevant information about an exchange for historical data fetch.
 
     Args:
@@ -23,12 +23,10 @@ async def exchange_info(exchange):
         str: JSON data with market exchange information.
     """
 
-    # Checks to see if the exchange is valid.
-    try:
+    if exchange_object:
+        ex = exchange_object
+    else:
         ex = getattr (ccxt, exchange) ()
-    except AttributeError:
-        return {'error': 'exchange_error',
-                'description': "Exchange {} not found. Please check the exchange is supported with ccxt.".format(exchange)}
 
     # Loads the market.
     ex.load_markets()
@@ -80,4 +78,4 @@ async def historical_data(exchange, symbol, timeframe, start, end, exchange_obje
     # Cuts off the DataFrame at the ending time.
     df = df[df.Time <= ex.parse8601(data_end.isoformat())]
 
-    return df.to_json()
+    return df.to_dict()
