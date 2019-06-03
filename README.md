@@ -1,9 +1,23 @@
 <p align="center">
   <img height="280" src="./assets/CryptoBook Box.png">
   <br>
+  
+  <a href="https://travis-ci.com/Waultics/CryptoBook">
+    <img src="https://travis-ci.com/Waultics/CryptoBook.svg?branch=master">
+  </a>
+  
+  <a href="https://readthedocs.org/projects/cryptobook/badge/?version=latest">
+    <img src="https://readthedocs.org/projects/cryptobook/badge/?version=latest">
+  </a>
+  
+  <a href="https://coveralls.io/github/Waultics/CryptoBook?branch=master">
+    <img src="https://coveralls.io/repos/github/Waultics/CryptoBook/badge.svg?branch=master">
+  </a>
+  
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg">
+  </a>
 </p>
-
-[![Travis](https://travis-ci.com/Waultics/CryptoBook.svg?branch=master)](https://travis-ci.com/Waultics/CryptoBook) [![Documentation Status](https://readthedocs.org/projects/cryptobook/badge/?version=latest)](https://cryptobook.readthedocs.io/en/latest/?badge=latest) [![Coverage Status](https://coveralls.io/repos/github/Waultics/CryptoBook/badge.svg?branch=master)](https://coveralls.io/github/Waultics/CryptoBook?branch=master) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A RESTful API project that allows easy gathering of historical and live cryptocurrency data with ease. To be utilized as a microservice for larger projects.
 
@@ -33,7 +47,7 @@ Latest development version can be installed straight from Github.
 
 ```bash
 $ pip install -U git+https://github.com/Waultics/CryptoBook.git
-cd CryptoBook
+$ cd CryptoBook
 $ python CryptoBook/api.py
 ```
 
