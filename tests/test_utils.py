@@ -13,6 +13,6 @@ async def test_get_exchange_info():
 
 @pytest.mark.asyncio
 async def test_get_historical_data():
-    """ Tests to verify that get_historical_data() function returns a dictionary without error. """
-    call = await utils.historical_data(symbol = 'BTC\ETH', ex = 'binance', timeframe = '5m', start = '2018-01-01 00:00:00', end = '2018-01-01 00:01:00')
+    """ Checks that with valid input get_historical_data() function returns a json string. """
+    call = await utils.historical_data(exchange = 'binance', symbol = 'ETH/BTC', timeframe = '15m', start = '2018-01-01 00:00:00', end = '2018-01-01 01:00:00')
     assert type(call) == dict
