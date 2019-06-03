@@ -11,7 +11,7 @@
   </a>
   
   <a href="https://coveralls.io/github/Waultics/CryptoBook?branch=master">
-    <img src="https://coveralls.io/repos/github/Waultics/CryptoBook/badge.svg?branch=master">
+    <img src="http://coveralls.io/repos/github/Waultics/CryptoBook/badge.svg?branch=master">
   </a>
   
   <a href="https://opensource.org/licenses/MIT">
