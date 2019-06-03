@@ -2,7 +2,23 @@ from CryptoBook import validators
 from ccxt import Exchange
 import pytest
 
-class Test_validator_check_historical_data(object):
+class Test_check_exchange_info(object):
+    """ Test for check_exchange_info() function with proper and improper params. """
+
+    def test_proper_input(self):
+        valid_request, status, response = validators.check_exchange_info("binance")
+        assert valid_request == True
+        assert status == None
+        assert response['exchange-object'] is not None
+
+    def test_invalid_input(self):
+        valid_request, status, response = validators.check_exchange_info("random")
+        assert valid_request == False
+        assert status == 400
+        assert response['error'] == 'exchange_error'
+
+
+class Test_check_historical_data(object):
     """ Test for the check_historical_data() function with proper, improper, and empty params. """
 
     def test_proper_input(self):
