@@ -20,7 +20,7 @@ async def test_api_get_ip_get(application):
     assert resp.status == 200
 
     resp_json = await resp.json()
-    assert list(resp_json.keys()) == ['ip']
+    assert resp_json.keys() == set(['ip'])
 
 async def test_api_exchange_info_get(application):
     """ Tests the function api_exchange_info for response status, and response json. """
@@ -29,14 +29,14 @@ async def test_api_exchange_info_get(application):
     assert resp.status == 200
 
     resp_json = await resp.json()
-    assert list(resp_json.keys()) == ['exchange', 'symbols', 'timeframes', 'historical']
+    assert resp_json.keys() == set(['exchange', 'symbols', 'timeframes', 'historical'])
 
 async def test_api_historical_data_post(application):
     """ Tests the function api_historical_data for response status, and response json. """
 
     data = {
-        'symbol': 'ETH/BTC',
         'exchange': 'binance',
+        'symbol': 'ETH/BTC',
         'timeframe': '1m',
         'start': '2018-01-01 00:00:00',
         'end': '2018-05-01 00:00:00'
@@ -45,5 +45,5 @@ async def test_api_historical_data_post(application):
     resp = await application.post('/api/v1/cryptobook/historical', data = json.dumps(data))
     assert resp.status == 200
 
-    resp_json = json.loads(await resp.json())
-    assert list(resp_json.keys()) == ['Time', 'Open', 'High', 'Low', 'Close', 'Volume']
+    resp_json = await resp.json()
+    assert resp_json.keys() == set(['Time', 'Open', 'High', 'Low', 'Close', 'Volume'])

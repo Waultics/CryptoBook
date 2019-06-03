@@ -13,77 +13,51 @@ async def get_ip():
         async with session.get("https://api.ipify.org?format=json") as response:
             return await response.json()
 
-# @todo Replace the market input var `ex` to `exchange` in 'exchange_info' function.
-# @body For better code use it would be best to replace 'ex' with exchange.
-async def exchange_info(ex):
+async def exchange_info(exchange, exchange_object=None):
     """ Fetches and returns relevant information about an exchange for historical data fetch.
 
     Args:
-        ex (str): The name of the exchange.
+        exchange (str): The name of the exchange.
+        exchange_object (ccxt.Exchange): Optional ccxt.Exchange object with user-set configuration. If not passed, function will initialize a fresh ccxt.Exchange object.
 
     Returns:
         str: JSON data with market exchange information.
     """
 
-    # Checks to see if the exchange is valid.
-    try:
-        exchange = getattr (ccxt, ex) ()
-    except AttributeError:
-        return {'error': 'exchange_error',
-                'description': "Exchange {} not found. Please check the exchange is supported with ccxt.".format(ex)}
+    if exchange_object:
+        ex = exchange_object
+    else:
+        ex = getattr (ccxt, exchange) ()
 
     # Loads the market.
-    exchange.load_markets()
+    ex.load_markets()
 
     # Returns the information.
-    return { 'exchange': ex,
-             'symbols': exchange.symbols,
-             'timeframes': exchange.timeframes,
-             'historical': exchange.has['fetchOHLCV']}
+    return { 'exchange': exchange,
+             'symbols': ex.symbols,
+             'timeframes': ex.timeframes,
+             'historical': ex.has['fetchOHLCV']}
 
-# @todo Replace the market input var 'ex' to 'exchange' in 'historical_data' function.
-# @body For better code use it would be easier to have the `ex` param to be placed first, and be changed to `exchange`.
-async def historical_data(symbol, ex, timeframe, start, end):
+async def historical_data(exchange, symbol, timeframe, start, end, exchange_object=None):
     """ Returns historical data of any market.
 
     Args:
+        ex (ccxt.Exchange): Exchange object.
         symbol (str): The exchange symbol one desires.
-        ex (str): The name of the exchange.
         timeframe (str): Timeframe of the data.
         start (str): Beginning date and time of the data.
         end (str): Ending date and time of the data.
+        exchange_object (ccxt.Exchange): Optional ccxt.Exchange object with user-set configuration. If not passed, function will initialize a fresh ccxt.Exchange object.
 
     Returns:
         str: JSON data with market exchange information.
     """
 
-    # Checks to see if the exchange is valid.
-    try:
-        exchange = getattr (ccxt, ex) ()
-    except AttributeError:
-        return {'error': 'exchange_error',
-                'description': "Exchange {} not found. Please check the exchange is supported.".format(ex)}
-
-    # Checks if fetching of historical data for the specific exchange is allowed.
-    if exchange.has["fetchOHLCV"] != True:
-        return { 'error': 'historical_error',
-                 'description': "{} does not support fetching OHLC data. Please use another exchange".format(ex)}
-
-    # Checks to see if the timeframe is available.
-    if (not hasattr(exchange, 'timeframes')) or (timeframe not in exchange.timeframes):
-        return {'error': 'timeframe_error',
-                'description': "The requested timeframe ({}) is not available from {}.".format(timeframe, ex),
-                'timeframes': exchange.timeframes.keys()}
-
-    # Loads the market.
-    exchange.load_markets()
-    exchange.enableRateLimit = False
-
-    # Check to see if the symbol is available on the exchange.
-    if symbol not in exchange.symbols:
-        return { 'error': 'symbol_error',
-                 'description': "The requested symbol ({}) is not available from {}.".format(symbol, ex),
-                 'symbols': exchange.symbols}
+    if exchange_object:
+        ex = exchange_object
+        ex.enableRateLimit = False
+    else:
+        ex = getattr (ccxt, exchange) ()
 
     # Configuration settings for the DataFrame.
     header = ['Time', 'Open', 'High', 'Low', 'Close', 'Volume']
@@ -93,16 +67,16 @@ async def historical_data(symbol, ex, timeframe, start, end):
     data_end = parse(end)
 
     # Re-formats the `start` key to proper ISO8601.
-    current = exchange.parse8601(parse(start).isoformat())
+    current = ex.parse8601(parse(start).isoformat())
 
     # Begins while loop.
     while data_start < data_end:
-        df = df.append(pd.DataFrame(data = exchange.fetch_ohlcv(symbol, timeframe, current), columns=header), ignore_index=True)
+        df = df.append(pd.DataFrame(data = ex.fetch_ohlcv(symbol, timeframe, current), columns=header), ignore_index=True)
 
         current = df[-1:]['Time'].iloc[0]
         data_start = data_start + timedelta(microseconds=current)
 
     # Cuts off the DataFrame at the ending time.
-    df = df[df.Time <= exchange.parse8601(data_end.isoformat())]
+    df = df[df.Time <= ex.parse8601(data_end.isoformat())]
 
-    return df.to_json()
+    return df.to_dict()
