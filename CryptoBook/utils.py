@@ -75,6 +75,8 @@ async def historical_data(symbol, ex, timeframe, start, end):
 
     # Begins while loop.
     while data_start < data_end:
+
+        #TODO(aescontrela/synchronizing): make all these calls asynchronously
         df = df.append(pd.DataFrame(data = exchange.fetch_ohlcv(symbol, timeframe, current), columns=header), ignore_index=True)
 
         current = df[-1:]['Time'].iloc[0]
