@@ -1,4 +1,4 @@
-FROM python:3
+FROM nikolaik/python-nodejs:latest
 
 # Exposes this container's port 9900 to other containers.
 EXPOSE 9900
