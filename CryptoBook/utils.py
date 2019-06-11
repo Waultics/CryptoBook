@@ -1,6 +1,7 @@
 from datetime import timedelta
 from dateutil.parser import parse
 import pandas as pd
+import cfscrape
 import asyncio
 import aiohttp
 import ccxt
@@ -56,6 +57,7 @@ async def historical_data(exchange, symbol, timeframe, start, end, exchange_obje
     if exchange_object:
         ex = exchange_object
         ex.enableRateLimit = False
+        ex.session = cfscrape.create_scraper()
     else:
         ex = getattr (ccxt, exchange) ()
 
