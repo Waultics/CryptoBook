@@ -10,10 +10,10 @@ def check_exchange_info(exchange):
     Args:
         exchange (str): The name of the exchange to check.
 
-    Returns:
-        bool: Boolean representing whether or not check was successfull or failure.
-        int: HTTP code corresponding to the data validation. None if return bool above is true.
-        dict: The response by the validator; either an error, or the loaded ccxt exchange object.
+    :returns:
+        - **valid_request** (*bool*): Boolean representing whether or not check was successfull or failure.
+        - **status** (*int*): HTTP code corresponding to the data validation. None if return bool above is true.
+        - **response** (*dict*): The response by the validator; either an error, or the loaded ccxt exchange object.
     """
 
     try:
@@ -30,10 +30,10 @@ def check_historical_data(request):
     Args:
         request (dict): The request sent into the server.
 
-    Returns:
-        bool: Boolean representing whether or not check was successfull or failure.
-        int: HTTP code corresponding to the data validation. None if return bool above is true.
-        dict: The response by the validator; either an error, or the loaded ccxt exchange object.
+    :returns:
+        - **valid_request** (*bool*): Boolean representing whether or not check was successfull or failure.
+        - **status** (*int*): HTTP code corresponding to the data validation. None if return bool above is true.
+        - **response** (*dict*): The response by the validator; either an error, or the loaded ccxt exchange object.
     """
 
     # Creates the validator class and schema to check the requests' params.
