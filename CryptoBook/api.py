@@ -48,4 +48,4 @@ async def api_historical_data(request):
 # 'pragma' line below insures Coverall does not bother checking this function for coverage.
 if __name__ == '__main__': # pragma: no cover
     host, port = load_config()
-    app.run(host=config['host'], port=config['port'])
+    app.run(host=host, port=port)
