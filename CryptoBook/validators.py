@@ -5,7 +5,17 @@ from sanic.response import json
 import ccxt
 
 def check_exchange_info(exchange):
-    # Checks to see if the exchange is valid.
+    """ Checks to see if the exchange is valid.
+
+    Args:
+        exchange (str): The name of the exchange to check.
+
+    Returns:
+        bool: Boolean representing whether or not check was successfull or failure.
+        int: HTTP code corresponding to the data validation. None if return bool above is true.
+        dict: The response by the validator; either an error, or the loaded ccxt exchange object.
+    """
+
     try:
         ex = getattr (ccxt, exchange) ()
     except AttributeError:
@@ -22,7 +32,8 @@ def check_historical_data(request):
 
     Returns:
         bool: Boolean representing whether or not check was successfull or failure.
-        dict: Errors corresponding to the data validation. Empty if return bool is true.
+        int: HTTP code corresponding to the data validation. None if return bool above is true.
+        dict: The response by the validator; either an error, or the loaded ccxt exchange object.
     """
 
     # Creates the validator class and schema to check the requests' params.
