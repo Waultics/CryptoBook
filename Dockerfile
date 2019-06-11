@@ -1,4 +1,8 @@
-FROM nikolaik/python-nodejs:latest
+FROM python:3
+
+# Install NodeJS to the Alpine container (depedency).
+RUN apt-get -y update
+RUN apt-get -y install nodejs
 
 # Exposes this container's port 9900 to other containers.
 EXPOSE 9900
