@@ -139,8 +139,13 @@ Historical Data
     :jsonparam string timeframe: Timeframe of the data.
     :jsonparam string start: Beginning date and time of the data.
     :jsonparam string end: Ending date and time of the data.
+    :jsonparam bool cfbypass: (optional) Flag to indicate whether or not to bypass CloudFlare checking (read more below).
     :statuscode 200: No error.
     :statuscode 404: Resource not found.
+
+    **Note on cfbypass Flag**
+
+    To bypass CloudFlare this library is using the open source `cfscrape <https://pypi.org/project/cfscrape/>`_ library, which unfortunately does not support asynchronous requests with `aiohttp`. Therefore, if enabled, the scraper will not run with asynchronous capability.
 
     **Parsing data**:
 
