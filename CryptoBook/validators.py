@@ -39,6 +39,9 @@ async def check_historical_data(request):
         - **response** (*dict*): The response by the validator; details about an error.
     """
 
+    # @todo Add validation for fetchOHLCV function.
+    # @description Due to the nature of some exchanges, their reply is not always historical. Therefore, there needs to be a manner in which the verifier checks to ensure the market will _only_ return the proper historical data asked by the user. 
+
     # Creates the validator class and schema to check the requests' params.
     v = Validator()
     date = lambda s: datetime.strptime(s, '%Y-%m-%d %H:%M:%S')

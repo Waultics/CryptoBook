@@ -4,12 +4,12 @@ import requests
 import json
 
 data = {
-    'exchange':'binance',
+    'exchange':'coinbasepro',
     'symbol':'ETH/BTC',
     'timeframe':'1m',
     'start':'2018-01-01 00:00:00',
-    'end':'2019-01-01 00:00:00',
-    'cfbypass': False # Optional flag if exchange uses CloudFlare.
+    'end':'2018-01-05 00:00:00',
+    'cfbypass': True # Optional flag if exchange uses CloudFlare.
 }
 request_before = datetime.now()
 
