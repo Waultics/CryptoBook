@@ -1,10 +1,10 @@
 from cerberus import Validator, DocumentError
 from datetime import datetime
-
+import ccxt.async_support as ccxt_async
 from sanic.response import json
 import ccxt
 
-def check_exchange_info(exchange):
+async def check_exchange_info(exchange):
     """ Checks to see if the exchange is valid.
 
     Args:
@@ -13,18 +13,21 @@ def check_exchange_info(exchange):
     :returns:
         - **valid_request** (*bool*): Boolean representing whether or not check was successfull or failure.
         - **status** (*int*): HTTP code corresponding to the data validation. None if return bool above is true.
-        - **response** (*dict*): The response by the validator; either an error, or the loaded ccxt exchange object.
+        - **response** (*dict*): The response by the validator; details about an error.
     """
 
     try:
-        ex = getattr (ccxt, exchange) ()
+        ex = getattr (ccxt_async, exchange) ()
     except AttributeError:
         return False, 400, {'error': 'exchange_error',
                             'description': "Exchange {} not found. Please check the exchange is supported with ccxt.".format(exchange)}
 
-    return True, None, {'exchange-object': ex}
+    # Closing connection with the market.
+    await ex.close()
 
-def check_historical_data(request):
+    return True, None, None
+
+async def check_historical_data(request):
     """ Verify json request for /api/v1/cryptobook/historical endpoint.
 
     Args:
@@ -33,7 +36,7 @@ def check_historical_data(request):
     :returns:
         - **valid_request** (*bool*): Boolean representing whether or not check was successfull or failure.
         - **status** (*int*): HTTP code corresponding to the data validation. None if return bool above is true.
-        - **response** (*dict*): The response by the validator; either an error, or the loaded ccxt exchange object.
+        - **response** (*dict*): The response by the validator; details about an error.
     """
 
     # Creates the validator class and schema to check the requests' params.
@@ -43,7 +46,8 @@ def check_historical_data(request):
                 'symbol': {'type': 'string', 'required': True},
                 'timeframe': {'type': 'string', 'required': True},
                 'start': {'type': 'datetime', 'coerce': date, 'required': True},
-                'end': {'type': 'datetime', 'coerce': date, 'required': True}}
+                'end': {'type': 'datetime', 'coerce': date, 'required': True},
+                'cfbypass': {'type': 'boolean'}}
 
     # Checks to make sure the request has the proper keys.
     if not v.validate(request):
@@ -58,7 +62,7 @@ def check_historical_data(request):
 
     # Checks to see if the exchange is valid.
     try:
-        ex = getattr (ccxt, exchange) ()
+        ex = getattr (ccxt_async, exchange) ()
     except AttributeError:
         return False, 400, {'error': 'exchange_error',
                             'description': "Exchange {} not found. Please check the exchange is supported.".format(exchange)}
@@ -75,7 +79,7 @@ def check_historical_data(request):
                             'timeframes': ex.timeframes.keys()}
 
     # Loads the market for the symbols.
-    ex.load_markets()
+    await ex.load_markets()
 
     # Check to see if the symbol is available on the exchange.
     if symbol not in ex.symbols:
@@ -83,5 +87,8 @@ def check_historical_data(request):
                             'description': "The requested symbol ({}) is not available from {}.".format(symbol, exchange),
                             'symbols': ex.symbols}
 
+    # Closing connection with the market.
+    await ex.close()
+
     # Returns true if all the checks passes with the loaded exchange.
-    return True, None, {'exchange-object': ex}
+    return True, None, None
