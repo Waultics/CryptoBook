@@ -15,10 +15,7 @@ data = {
 r = requests.post(url="http://0.0.0.0:9900/api/v1/cryptobook/historical", data=json.dumps(data))
 
 # Reads the request.
-df = pd.read_json(r.text)
-
-# Organizes the DataFrame by index.
-df = df.sort_index()
+df = pd.read_json(r.text, orient='split')
 
 # Converts the Time column to DateTime objects.
 df['Time'] = pd.to_datetime(df['Time'], unit='ms')

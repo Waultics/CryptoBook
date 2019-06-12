@@ -153,4 +153,4 @@ Historical Data
 
     .. sourcecode:: python
 
-        df = pd.read_json(resp)
+        df = pd.read_json(resp, orient='split')

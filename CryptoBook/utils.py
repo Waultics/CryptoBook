@@ -119,4 +119,4 @@ async def historical_data(exchange, symbol, timeframe, start, end, cfbypass=Fals
         await ex.close()
 
     # Return the DataFrame as a dictionary.
-    return df.to_dict()
+    return df.to_dict(orient='split')
