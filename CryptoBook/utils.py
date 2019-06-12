@@ -74,9 +74,6 @@ async def historical_data(exchange, symbol, timeframe, start, end, cfbypass=Fals
     header = ['Time', 'Open', 'High', 'Low', 'Close', 'Volume']
     df = pd.DataFrame(columns=header)
 
-    # @todo Ensure that the time is not getting cut-off for other exchanges.
-    # @desc This is due to parse8601 and the manner in which the specific market returns a timestamp. Ensure correct parser is being used.
-
     # Setting our start and ending variables as given by the input.
     time_start = ex.parse8601(parse(start).isoformat())
     time_end = ex.parse8601(parse(end).isoformat())
@@ -90,10 +87,13 @@ async def historical_data(exchange, symbol, timeframe, start, end, cfbypass=Fals
     # The interval of data in which the market is replying by.
     resp_interval = resp_first[-1][0] - resp_first[0][0]
 
+    # Retrieves the smaller interval between two side-by-side data points.
+    resp_small_interval = resp_first[-1][0] - resp_first[-2][0]
+
     # Computes all of the datetime we must request from the exchange.
     times = []
     while time_start < time_end:
-        time_start += resp_interval + 60000 # @todo make this dynamic to the interval given.
+        time_start += resp_interval + resp_small_interval
         times.append(time_start)
 
     # Create a DataFrame with the first response.
@@ -110,9 +110,9 @@ async def historical_data(exchange, symbol, timeframe, start, end, cfbypass=Fals
     df = df.append(dataframes, ignore_index=True)
 
     # Cuts off the DataFrame at the ending time.
-    #df = df[df.Time <= time_end]
+    df = df[df.Time <= time_end]
 
-    # Removes duplicates due to server responding with more values per call.
+    # Removes duplicates due to server responding with (sometimes) duplicate values.
     df = df.drop_duplicates(keep='first')
 
     if not cfbypass:
