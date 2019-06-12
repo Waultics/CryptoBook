@@ -32,11 +32,17 @@ async def exchange_info(exchange):
     # Loads the market.
     await ex.load_markets()
 
-    # Returns the information.
-    return { 'exchange': exchange,
+    # Gathers market data.
+    data = { 'exchange': exchange,
              'symbols': ex.symbols,
              'timeframes': ex.timeframes,
              'historical': ex.has['fetchOHLCV']}
+
+    # Closes the market connection due to async ccxt.
+    await ex.close()
+
+    # Returns the information.
+    return data
 
 async def historical_data(exchange, symbol, timeframe, start, end, cfbypass=False):
     """ Returns historical data of any market.
@@ -115,7 +121,7 @@ async def historical_data(exchange, symbol, timeframe, start, end, cfbypass=Fals
     # Removes duplicates due to server responding with (sometimes) duplicate values.
     df = df.drop_duplicates(keep='first')
 
-    # Must close connection with market if using ccxt asynchronously. 
+    # Must close connection with market if using ccxt asynchronously.
     if not cfbypass:
         await ex.close()
 
