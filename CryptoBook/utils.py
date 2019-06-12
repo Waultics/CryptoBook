@@ -47,6 +47,7 @@ async def historical_data(exchange, symbol, timeframe, start, end, cfbypass=Fals
         timeframe (str): Timeframe of the data.
         start (str): Beginning date and time of the data.
         end (str): Ending date and time of the data.
+        cfbypass (bool): Optional flag to indicated whether or not do bypass CloudFlare checks (read notes).
 
     Returns:
         str: JSON data with market exchange information.
@@ -109,7 +110,7 @@ async def historical_data(exchange, symbol, timeframe, start, end, cfbypass=Fals
     df = df.append(dataframes, ignore_index=True)
 
     # Cuts off the DataFrame at the ending time.
-    df = df[df.Time <= time_end]
+    #df = df[df.Time <= time_end]
 
     # Removes duplicates due to server responding with more values per call.
     df = df.drop_duplicates(keep='first')
