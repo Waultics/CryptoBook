@@ -115,6 +115,7 @@ async def historical_data(exchange, symbol, timeframe, start, end, cfbypass=Fals
     # Removes duplicates due to server responding with (sometimes) duplicate values.
     df = df.drop_duplicates(keep='first')
 
+    # Must close connection with market if using ccxt asynchronously. 
     if not cfbypass:
         await ex.close()
 
