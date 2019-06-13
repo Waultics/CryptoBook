@@ -12,8 +12,7 @@ Node packages:
 // cryptocompare utils
 var CCC = require('./ccc-streamer-utilities.js');
 
-// this dictionary contains the most up-to-date crypto data
-var currentPrice = {};
+
 
 // initialize a client socket to connect to cryptocompare
 var io = require('socket.io-client');
@@ -28,9 +27,11 @@ server.listen(80);
 
 io_serv.on('connection', function(connected_socket){
   console.log("CONNECTED");
-  connected_socket.on('subscribe', function(subscription) {
-    socket.emit('SubAdd', { subs: subscription });
-    console.log(subscription);
+  connected_socket.on('subscribe', function(subscriptions) {
+    subscriptions.forEach(function (subscription, index) {
+      connected_socket.join(subscription);
+    });
+    socket.emit('SubAdd', { subs: subscriptions });
   });
 });
 
@@ -39,16 +40,45 @@ io_serv.on('connection', function(connected_socket){
 // each time a message is recieved.
 socket.on("m", function(message) {
   var messageType = message.substring(0, message.indexOf("~"));
+  var messageSubscription = message.substring(
+      0,
+      message.split("~", 4).join("~").length);
+  console.log(messageSubscription);   
 
   if (messageType == CCC.STATIC.TYPE.CURRENTAGG) {
-    dataUnpack(message);
+    unpacked = dataUnpack(message);
   } else if (messageType == CCC.STATIC.TYPE.FULLVOLUME) {
-    decorateWithFullVolume(message);
+    unpacked = decorateWithFullVolume(message);
   } else if (messageType == CCC.STATIC.TYPE.TRADE) {
-    dataUnpackTrade(message);
+    unpacked = dataUnpackTrade(message);
+  } else if (messageType == CCC.STATIC.TYPE.CURRENT) {
+    unpacked = dataUnpackCurrent(message);
   }
-  io_serv.sockets.emit('response', {market_data: currentPrice});	 
+    
+  io_serv.sockets.in(messageSubscription).emit('response', unpacked);  
+// io_serv.sockets.emit('response', {market_data: currentPrice});	 
 });
+
+var dataUnpackCurrent = function(message) {
+  var data = CCC.CURRENT.unpack(message);
+  
+  var from = data['FROMSYMBOL'];
+  var to = data['TOSYMBOL'];
+  
+  var fsym = CCC.STATIC.CURRENCY.getSymbol(from);
+  var tsym = CCC.STATIC.CURRENCY.getSymbol(to);
+
+  var pair = from + to;
+
+  var currentPrice = {};
+  currentPrice[pair] = {};
+  
+  for (var key in data) {
+    currentPrice[pair][key] = data[key];
+  }
+
+  return currentPrice;
+}
 
 var dataUnpackTrade = function(message) {
   var data = CCC.TRADE.unpack(message);
@@ -61,13 +91,14 @@ var dataUnpackTrade = function(message) {
 	
   var pair = from + to;
         
-  if (!currentPrice.hasOwnProperty(pair)) {
-    currentPrice[pair] = {};
-  }
+  // this dictionary contains the most up-to-date crypto data
+  var currentPrice = {};
+  currentPrice[pair] = {};
 
   for (var key in data) {
     currentPrice[pair][key] = data[key];
   }
+  return currentPrice;
 }
 
 // unpack data message into dictionary
@@ -79,10 +110,9 @@ var dataUnpack = function(message) {
   var fsym = CCC.STATIC.CURRENCY.getSymbol(from);
   var tsym = CCC.STATIC.CURRENCY.getSymbol(to);
   var pair = from + to;
-
-  if (!currentPrice.hasOwnProperty(pair)) {
-    currentPrice[pair] = {};
-  }
+  
+  currentPrice = {}
+  currentPrice[pair] = {};
 
   for (var key in data) {
     currentPrice[pair][key] = data[key];
@@ -93,7 +123,7 @@ var dataUnpack = function(message) {
   }
   currentPrice[pair]['CHANGE24HOUR'] = CCC.convertValueToDisplay(tsym, (currentPrice[pair]['PRICE'] - currentPrice[pair]['OPEN24HOUR']));
   currentPrice[pair]['CHANGE24HOURPCT'] = ((currentPrice[pair]['PRICE'] - currentPrice[pair]['OPEN24HOUR']) / currentPrice[pair]['OPEN24HOUR'] * 100).toFixed(2) + "%";
-  console.log(currentPrice);
+  return currentPrice;
 };
 
 // unpack volume message into dictionary
@@ -105,11 +135,10 @@ var decorateWithFullVolume = function(message) {
   var tsym = CCC.STATIC.CURRENCY.getSymbol(to);
   var pair = from + to;
 
-  if (!currentPrice.hasOwnProperty(pair)) {
-    currentPrice[pair] = {};
-  }
+  currentPrice = {}
+  currentPrice[pair] = {};
 
   currentPrice[pair]['FULLVOLUMEFROM'] = parseFloat(volData['FULLVOLUME']);
   currentPrice[pair]['FULLVOLUMETO'] = ((currentPrice[pair]['FULLVOLUMEFROM'] - currentPrice[pair]['VOLUME24HOUR']) * currentPrice[pair]['PRICE']) + currentPrice[pair]['VOLUME24HOURTO'];
-  console.log(currentPrice);		
+  return currentPrice;
 };
