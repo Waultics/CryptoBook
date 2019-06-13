@@ -88,7 +88,50 @@ Historical Data
             "symbol": "ETH/BTC",
             "timeframe": "1m",
             "start": "2018-01-01 00:00:00",
-            "end": "2018-05-01 00:00:00"
+            "end": "2018-01-01 00:05:00"
+        }
+
+    **Example response**:
+
+    .. sourcecode:: http
+
+        HTTP/1.1 200 OK
+        Connection: keep-alive
+        Content-Length: 543
+        Content-Type: application/json
+        Keep-Alive: 5
+
+        {
+            "Close": {
+                "0": 0.05352,
+                "...",
+                "5": 0.053588
+            },
+            "High": {
+                "0": 0.053613,
+                "...",
+                "5": 0.053654
+            },
+            "Low": {
+                "0": 0.053496,
+                "...",
+                "5": 0.053567
+            },
+            "Open": {
+                "0": 0.053586,
+                "...",
+                "5": 0.053573
+            },
+            "Time": {
+                "0": 1514764800000,
+                "...",
+                "5": 1514765100000
+            },
+            "Volume": {
+                "0": 162.312,
+                "...",
+                "5": 194.333
+            }
         }
 
     :jsonparam string exchange: The name of the exchange.
@@ -96,8 +139,13 @@ Historical Data
     :jsonparam string timeframe: Timeframe of the data.
     :jsonparam string start: Beginning date and time of the data.
     :jsonparam string end: Ending date and time of the data.
+    :jsonparam bool cfbypass: (optional) Flag to indicate whether or not to bypass CloudFlare checking (read more below).
     :statuscode 200: No error.
     :statuscode 404: Resource not found.
+
+    **Note on cfbypass Flag**
+
+    To bypass CloudFlare this library is using the open source `cfscrape <https://pypi.org/project/cfscrape/>`_ library, which unfortunately does not support asynchronous requests with `aiohttp`. Therefore, if enabled, the scraper will not run with asynchronous capability.
 
     **Parsing data**:
 
@@ -105,4 +153,4 @@ Historical Data
 
     .. sourcecode:: python
 
-        df = pd.read_json(resp)
+        df = pd.read_json(resp, orient='split')

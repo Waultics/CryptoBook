@@ -3,6 +3,7 @@ from validators import check_exchange_info, check_historical_data
 
 from sanic.response import json
 from sanic import Sanic
+import asyncio
 import yaml
 import os
 
@@ -23,29 +24,34 @@ async def api_get_ip(request):
 @app.route('/api/v1/cryptobook/exchange/<exchange_name:[A-z]+>')
 async def api_exchange_info(request, exchange_name):
     """ Returns information about the exchange. """
-    valid_request, status, response = check_exchange_info(exchange_name)
+    valid_request, status, response = await check_exchange_info(exchange_name)
     if not valid_request:
         return json(response, status=status)
     else:
-        return json(await exchange_info(exchange = exchange_name, exchange_object = response['exchange-object']), status=200)
+        return json(await exchange_info(exchange = exchange_name), status=200)
 
 @app.route('/api/v1/cryptobook/historical', methods=["POST"])
 async def api_historical_data(request):
     """ Returns historical exchange data. """
 
-    valid_request, status, response = check_historical_data(request.json)
+    valid_request, status, response = await check_historical_data(request.json)
     if not valid_request:
         return json(response, status=status)
     else:
-        return json(await historical_data(exchange=request.json['exchange'],
-                                          symbol=request.json['symbol'],
-                                          timeframe=request.json['timeframe'],
-                                          start=request.json['start'],
-                                          end=request.json['end'],
-                                          exchange_object = response['exchange-object']),
-                                          status=200)
+        req = {
+            'exchange':request.json['exchange'],
+            'symbol':request.json['symbol'],
+            'timeframe':request.json['timeframe'],
+            'start':request.json['start'],
+            'end':request.json['end']
+        }
+
+        if 'cfbypass' in request.json:
+            return json(await historical_data(**req, cfbypass=request.json['cfbypass']), status=200)
+        else:
+            return json(await historical_data(**req), status=200)
 
 # 'pragma' line below insures Coverall does not bother checking this function for coverage.
 if __name__ == '__main__': # pragma: no cover
     host, port = load_config()
-    app.run(host=config['host'], port=config['port'])
+    app.run(host=host, port=port)

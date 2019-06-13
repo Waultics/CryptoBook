@@ -4,6 +4,7 @@ pyyaml
 aiohttp
 pandas
 cerberus
+cfscrape
 
 pytest
 pytest-asyncio

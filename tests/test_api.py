@@ -63,7 +63,22 @@ class Test_historical_data(object):
         resp = await application.post('/api/v1/cryptobook/historical', data = json.dumps(data))
         resp_json = await resp.json()
         assert resp.status == 200
-        assert resp_json.keys() == set(['Time', 'Open', 'High', 'Low', 'Close', 'Volume'])
+        assert resp_json.keys() == set(['index', 'columns', 'data'])
+
+    async def test_proper_input_with_cfbypass(self, application):
+        """ Checks valid response is correctly replied to. """
+        data = {
+            'exchange': 'binance',
+            'symbol': 'ETH/BTC',
+            'timeframe': '1m',
+            'start': '2018-01-01 00:00:00',
+            'end': '2018-05-01 00:00:00',
+            'cfbypass': True
+        }
+        resp = await application.post('/api/v1/cryptobook/historical', data = json.dumps(data))
+        resp_json = await resp.json()
+        assert resp.status == 200
+        assert resp_json.keys() == set(['index', 'columns', 'data'])
 
     async def test_inproper_input(self, application):
         """ Checks invalid response is correctly replied to. """
