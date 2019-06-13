@@ -26,16 +26,16 @@ const io_serv = require('socket.io')(server);
 
 server.listen(80);
 
-io_serv.on('connected', function(socket){
+io_serv.on('connection', function(connected_socket){
   console.log("CONNECTED");
+  connected_socket.on('subscribe', function(subscription) {
+    socket.emit('SubAdd', { subs: subscription });
+    console.log(subscription);
+  });
 });
 
 // subscribe the client (io) to the cryptocompare ws
 // sample sub: var subscription = ['0~Kraken~BTC~USD'];
-var subscription = ['5~CCCAGG~BTC~USD', '5~CCCAGG~ETH~USD', '11~BTC', '11~ETH'];
-socket.emit('SubAdd', { subs: subscription });
-
-// client callback: unpack the data and emit it to all connected clients
 // each time a message is recieved.
 socket.on("m", function(message) {
   var messageType = message.substring(0, message.indexOf("~"));
