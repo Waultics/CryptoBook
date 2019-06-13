@@ -1,4 +1,3 @@
-from datetime import timedelta
 from dateutil.parser import parse
 import pandas as pd
 import asyncio
@@ -8,6 +7,7 @@ import ccxt.async_support as ccxt_async
 import ccxt
 import cfscrape
 
+
 async def get_ip():
     """ Fetches and returns the external IP of the server for testing purposes. """
 
@@ -15,6 +15,7 @@ async def get_ip():
     async with aiohttp.ClientSession(trust_env=True) as session:
         async with session.get("https://api.ipify.org?format=json") as response:
             return await response.json()
+
 
 async def exchange_info(exchange):
     """ Fetches and returns relevant information about an exchange for historical data fetch.
@@ -27,22 +28,25 @@ async def exchange_info(exchange):
     """
 
     # Loads the market.
-    ex = getattr (ccxt_async, exchange) ()
+    ex = getattr(ccxt_async, exchange)()
 
     # Loads the market.
     await ex.load_markets()
 
     # Gathers market data.
-    data = { 'exchange': exchange,
-             'symbols': ex.symbols,
-             'timeframes': ex.timeframes,
-             'historical': ex.has['fetchOHLCV']}
+    data = {
+        "exchange": exchange,
+        "symbols": ex.symbols,
+        "timeframes": ex.timeframes,
+        "historical": ex.has["fetchOHLCV"],
+    }
 
     # Closes the market connection due to async ccxt.
     await ex.close()
 
     # Returns the information.
     return data
+
 
 async def historical_data(exchange, symbol, timeframe, start, end, cfbypass=False):
     """ Returns historical data of any market.
@@ -67,17 +71,14 @@ async def historical_data(exchange, symbol, timeframe, start, end, cfbypass=Fals
 
     # Loadst the market.
     if cfbypass:
-        ex = getattr (ccxt, exchange) ({
-            'session': cfscrape.create_scraper(),
-            'enableRateLimit': False
-        })
+        ex = getattr(ccxt, exchange)(
+            {"session": cfscrape.create_scraper(), "enableRateLimit": False}
+        )
     else:
-        ex = getattr (ccxt_async, exchange) ({
-            'enableRateLimit': False
-        })
+        ex = getattr(ccxt_async, exchange)({"enableRateLimit": False})
 
     # Configuration settings for the DataFrame.
-    header = ['Time', 'Open', 'High', 'Low', 'Close', 'Volume']
+    header = ["Time", "Open", "High", "Low", "Close", "Volume"]
     df = pd.DataFrame(columns=header)
 
     # Setting our start and ending variables as given by the input.
@@ -103,27 +104,29 @@ async def historical_data(exchange, symbol, timeframe, start, end, cfbypass=Fals
         times.append(time_start)
 
     # Create a DataFrame with the first response.
-    df = df.append(pd.DataFrame(data = resp_first, columns=header), ignore_index=True)
+    df = df.append(pd.DataFrame(data=resp_first, columns=header), ignore_index=True)
 
     # Gathers all of the results in order.
     if cfbypass:
         responses = [ex.fetch_ohlcv(symbol, timeframe, time) for time in times]
     else:
-         responses = await asyncio.gather(*[ex.fetch_ohlcv(symbol, timeframe, time) for time in times])
+        responses = await asyncio.gather(
+            *[ex.fetch_ohlcv(symbol, timeframe, time) for time in times]
+        )
 
     # Appends all of our results to the DataFrame.
-    dataframes = [pd.DataFrame(data = response, columns=header) for response in responses]
+    dataframes = [pd.DataFrame(data=response, columns=header) for response in responses]
     df = df.append(dataframes, ignore_index=True)
 
     # Cuts off the DataFrame at the ending time.
     df = df[df.Time <= time_end]
 
     # Removes duplicates due to server responding with (sometimes) duplicate values.
-    df = df.drop_duplicates(keep='first')
+    df = df.drop_duplicates(keep="first")
 
     # Must close connection with market if using ccxt asynchronously.
     if not cfbypass:
         await ex.close()
 
     # Return the DataFrame as a dictionary.
-    return df.to_dict(orient='split')
+    return df.to_dict(orient="split")
