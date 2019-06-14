@@ -12,8 +12,9 @@ Node packages:
 // cryptocompare utils
 var CCC = require('./ccc-streamer-utilities.js');
 
-
-
+yaml = require('js-yaml');
+fs = require('fs');
+var config = yaml.safeLoad(fs.readFileSync('config.yml', 'utf8'));
 // initialize a client socket to connect to cryptocompare
 var io = require('socket.io-client');
 var socket = io.connect('https://streamer.cryptocompare.com/');
@@ -23,7 +24,7 @@ var app = require('express')();
 var server = require('http').Server(app);
 const io_serv = require('socket.io')(server);
 
-server.listen(80);
+server.listen(config['port'], config['host']);
 
 io_serv.on('connection', function(connected_socket){
   console.log("CONNECTED");
