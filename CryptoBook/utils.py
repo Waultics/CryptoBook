@@ -74,8 +74,19 @@ async def historical_data(exchange, symbol, timeframe, start, end, cfbypass=Fals
         ex = getattr(ccxt, exchange)(
             {"session": cfscrape.create_scraper(), "enableRateLimit": False}
         )
+
+        # Sets cookies and user agent for CloudFlare bypass.
+        tokens, user_agent = cfscrape.get_tokens(ex.urls["www"])
+        ex.headers = {
+            "cookie": "; ".join([key + "=" + tokens[key] for key in tokens]),
+            "user-agent": user_agent,
+        }
     else:
         ex = getattr(ccxt_async, exchange)({"enableRateLimit": False})
+
+    # Does not reject bad SSL certificates, and trusts the env variables.
+    ex.session.verify = False
+    ex.session.trust_env = True
 
     # Configuration settings for the DataFrame.
     header = ["Time", "Open", "High", "Low", "Close", "Volume"]

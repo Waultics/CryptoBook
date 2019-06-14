@@ -1,8 +1,11 @@
 FROM python:3
 
-# Install NodeJS to the Alpine container (depedency).
+# Upgrade Alpine's system.
 RUN apt-get -y update
-RUN apt-get -y install nodejs
+RUN apt-get -y upgrade
+
+# Install NodeJS na OpenSSL to the Alpine container (depedency).
+RUN apt-get -y install openssl nodejs
 
 # Exposes this container's port 9900 to other containers.
 EXPOSE 9900
