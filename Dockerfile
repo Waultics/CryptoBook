@@ -1,5 +1,8 @@
 FROM python:3
 
+# Ensuring we have the latest Debian packages.
+RUN apt-get -y update && apt-get -y upgrade
+
 # Installing OpenSSL 1.1.1.
 RUN wget https://www.openssl.org/source/openssl-1.1.1a.tar.gz && \
     tar -zxf openssl-1.1.1a.tar.gz
@@ -13,7 +16,6 @@ RUN ./config && \
     ldconfig
 
 # Installing NodeJS for CloudFlare captcha bypass.
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 RUN apt-get -y install nodejs
 
 # Exposes this container's port 9900 to other containers.
