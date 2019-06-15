@@ -2,14 +2,14 @@ version: "3"
 
 services:
   cryptobook-py:
-          container_name: oculi-cryptobook-py
+          container_name: cryptobook-py
           build:
               context: ./
               dockerfile: ./CryptoBook-py/Dockerfile
           ports:
               - "9900:9900"
   cryptobook-js:
-          container_name: oculi-cryptobook-js
+          container_name: cryptobook-js
           build:
               context: ./
               dockerfile: ./CryptoBook-js/Dockerfile
