@@ -10,6 +10,6 @@ install:
     - pip install pytest-cov
     - pip install coveralls
 script:
-    - pytest --cov=CryptoBook/
+    - pytest --cov=CryptoBook-py/
 after_success:
     - coveralls
