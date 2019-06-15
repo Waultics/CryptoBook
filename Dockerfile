@@ -1,4 +1,11 @@
-FROM python:3
+FROM python:3-slim
+
+# Install g++ and make to ensure dependencies install with python:3-slim.
+RUN apt-get -y update
+RUN apt-get -y install g++ make
+
+# Install NodeJS to the Alpine container (depedency).
+RUN apt-get -y install nodejs
 
 # Upgrade Alpine's system.
 RUN apt-get -y update
