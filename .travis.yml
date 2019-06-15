@@ -6,7 +6,7 @@ python:
     - "3.6"
     - "3.7"
 install:
-    - pip install -r requirements/dev.txt
+    - pip install -r CryptoBook-py/requirements/dev.txt
     - pip install pytest-cov
     - pip install coveralls
 script:
