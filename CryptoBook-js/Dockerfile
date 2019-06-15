@@ -23,8 +23,8 @@ RUN npm link socket.io
 RUN npm link js-yaml
 
 COPY config.yml ./
-COPY ccc-streamer-utilities.js ./
-COPY cryptocompare_streamer.js ./
+COPY CryptoBook-js/ccc-streamer-utilities.js ./
+COPY CryptoBook-js/cryptocompare_streamer.js ./
 
 # Runs the js server.
 CMD [ "node", "cryptocompare_streamer" ]

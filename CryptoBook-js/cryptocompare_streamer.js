@@ -1,12 +1,12 @@
 /**
 Format: {SubscriptionId}~{ExchangeName}~{FromSymbol}~{ToSymbol}
-Use SubscriptionId 0 for TRADE, 2 for CURRENT, 5 for CURRENTAGG eg use key '5~CCCAGG~BTC~USD' to get aggregated data from the CCCAGG exchange 
+Use SubscriptionId 0 for TRADE, 2 for CURRENT, 5 for CURRENTAGG eg use key '5~CCCAGG~BTC~USD' to get aggregated data from the CCCAGG exchange
 Full Volume Format: 11~{FromSymbol} eg use '11~BTC' to get the full volume of BTC against all coin pairs
 For aggregate quote updates use CCCAGG ags market
 
 Node packages:
   - websocket client. - `npm install -g socket.io-client`
-  - Server. - `npm install -g express` 
+  - Server. - `npm install -g express`
 */
 
 // cryptocompare utils
@@ -24,7 +24,7 @@ var app = require('express')();
 var server = require('http').Server(app);
 const io_serv = require('socket.io')(server);
 
-server.listen(config['port'], config['host']);
+server.listen(config['js']['port'], config['js']['host']);
 
 io_serv.on('connection', function(connected_socket){
   console.log("CONNECTED");
@@ -44,7 +44,7 @@ socket.on("m", function(message) {
   var messageSubscription = message.substring(
       0,
       message.split("~", 4).join("~").length);
-  console.log(messageSubscription);   
+  console.log(messageSubscription);
 
   if (messageType == CCC.STATIC.TYPE.CURRENTAGG) {
     unpacked = dataUnpack(message);
@@ -55,17 +55,17 @@ socket.on("m", function(message) {
   } else if (messageType == CCC.STATIC.TYPE.CURRENT) {
     unpacked = dataUnpackCurrent(message);
   }
-    
-  io_serv.sockets.in(messageSubscription).emit('response', unpacked);  
-// io_serv.sockets.emit('response', {market_data: currentPrice});	 
+
+  io_serv.sockets.in(messageSubscription).emit('response', unpacked);
+// io_serv.sockets.emit('response', {market_data: currentPrice});
 });
 
 var dataUnpackCurrent = function(message) {
   var data = CCC.CURRENT.unpack(message);
-  
+
   var from = data['FROMSYMBOL'];
   var to = data['TOSYMBOL'];
-  
+
   var fsym = CCC.STATIC.CURRENCY.getSymbol(from);
   var tsym = CCC.STATIC.CURRENCY.getSymbol(to);
 
@@ -73,7 +73,7 @@ var dataUnpackCurrent = function(message) {
 
   var currentPrice = {};
   currentPrice[pair] = {};
-  
+
   for (var key in data) {
     currentPrice[pair][key] = data[key];
   }
@@ -83,15 +83,15 @@ var dataUnpackCurrent = function(message) {
 
 var dataUnpackTrade = function(message) {
   var data = CCC.TRADE.unpack(message);
-	
+
   var from = data['FSYM'];
   var to = data['TSYM'];
 
   var fsym = CCC.STATIC.CURRENCY.getSymbol(from);
   var tsym = CCC.STATIC.CURRENCY.getSymbol(to);
-	
+
   var pair = from + to;
-        
+
   // this dictionary contains the most up-to-date crypto data
   var currentPrice = {};
   currentPrice[pair] = {};
@@ -111,7 +111,7 @@ var dataUnpack = function(message) {
   var fsym = CCC.STATIC.CURRENCY.getSymbol(from);
   var tsym = CCC.STATIC.CURRENCY.getSymbol(to);
   var pair = from + to;
-  
+
   currentPrice = {}
   currentPrice[pair] = {};
 
