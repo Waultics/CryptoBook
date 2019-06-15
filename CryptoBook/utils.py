@@ -124,6 +124,8 @@ async def historical_data(exchange, symbol, timeframe, start, end, cfbypass=Fals
         responses = await asyncio.gather(
             *[ex.fetch_ohlcv(symbol, timeframe, time) for time in times]
         )
+        # Must close connection with market if using ccxt asynchronously.
+        ex.close()
 
     # Appends all of our results to the DataFrame.
     dataframes = [pd.DataFrame(data=response, columns=header) for response in responses]
@@ -134,10 +136,6 @@ async def historical_data(exchange, symbol, timeframe, start, end, cfbypass=Fals
 
     # Removes duplicates due to server responding with (sometimes) duplicate values.
     df = df.drop_duplicates(keep="first")
-
-    # Must close connection with market if using ccxt asynchronously.
-    if not cfbypass:
-        await ex.close()
 
     # Return the DataFrame as a dictionary.
     return df.to_dict(orient="split")
