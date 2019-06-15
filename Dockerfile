@@ -1,8 +1,18 @@
-FROM python:3
+FROM python:3-slim
+
+# Install g++ and make to ensure dependencies install with python:3-slim.
+RUN apt-get -y update
+RUN apt-get -y install g++ make
 
 # Install NodeJS to the Alpine container (depedency).
-RUN apt-get -y update
 RUN apt-get -y install nodejs
+
+# Upgrade Alpine's system.
+RUN apt-get -y update
+RUN apt-get -y upgrade
+
+# Install NodeJS na OpenSSL to the Alpine container (depedency).
+RUN apt-get -y install openssl nodejs
 
 # Exposes this container's port 9900 to other containers.
 EXPOSE 9900
