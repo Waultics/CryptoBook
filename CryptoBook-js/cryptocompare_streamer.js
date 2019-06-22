@@ -41,9 +41,8 @@ io_serv.on('connection', function(connected_socket){
 // each time a message is recieved.
 socket.on("m", function(message) {
   var messageType = message.substring(0, message.indexOf("~"));
-  var messageSubscription = message.substring(
-      0,
-      message.split("~", 4).join("~").length);
+  var messageSubscription = getSubscriptionFromMessage(message);
+
   console.log(messageSubscription);
 
   if (messageType == CCC.STATIC.TYPE.CURRENTAGG) {
@@ -60,7 +59,14 @@ socket.on("m", function(message) {
 // io_serv.sockets.emit('response', {market_data: currentPrice});
 });
 
+var getSubscriptionFromMessage = function(message) {
+      return  message.substring(
+          0,
+          message.split("~", 4).join("~").length);
+}
+
 var dataUnpackCurrent = function(message) {
+  var messageSubscription = getSubscriptionFromMessage(message);
   var data = CCC.CURRENT.unpack(message);
 
   var from = data['FROMSYMBOL'];
@@ -72,16 +78,17 @@ var dataUnpackCurrent = function(message) {
   var pair = from + to;
 
   var currentPrice = {};
-  currentPrice[pair] = {};
+  currentPrice[messageSubscription] = {};
 
   for (var key in data) {
-    currentPrice[pair][key] = data[key];
+    currentPrice[messageSubscription][key] = data[key];
   }
 
   return currentPrice;
 }
 
 var dataUnpackTrade = function(message) {
+  var messageSubscription = getSubscriptionFromMessage(message);
   var data = CCC.TRADE.unpack(message);
 
   var from = data['FSYM'];
@@ -94,16 +101,17 @@ var dataUnpackTrade = function(message) {
 
   // this dictionary contains the most up-to-date crypto data
   var currentPrice = {};
-  currentPrice[pair] = {};
+  currentPrice[messageSubscription] = {};
 
   for (var key in data) {
-    currentPrice[pair][key] = data[key];
+    currentPrice[messageSubscription][key] = data[key];
   }
   return currentPrice;
 }
 
 // unpack data message into dictionary
 var dataUnpack = function(message) {
+  var messageSubscription = getSubscriptionFromMessage(message);
   var data = CCC.CURRENT.unpack(message);
 
   var from = data['FROMSYMBOL'];
@@ -113,22 +121,23 @@ var dataUnpack = function(message) {
   var pair = from + to;
 
   currentPrice = {}
-  currentPrice[pair] = {};
+  currentPrice[messageSubscription] = {};
 
   for (var key in data) {
-    currentPrice[pair][key] = data[key];
+    currentPrice[messageSubscription][key] = data[key];
   }
 
-  if (currentPrice[pair]['LASTTRADEID']) {
-    currentPrice[pair]['LASTTRADEID'] = parseInt(currentPrice[pair]['LASTTRADEID']).toFixed(0);
+  if (currentPrice[messageSubscription]['LASTTRADEID']) {
+    currentPrice[messageSubscription]['LASTTRADEID'] = parseInt(currentPrice[messageSubscription]['LASTTRADEID']).toFixed(0);
   }
-  currentPrice[pair]['CHANGE24HOUR'] = CCC.convertValueToDisplay(tsym, (currentPrice[pair]['PRICE'] - currentPrice[pair]['OPEN24HOUR']));
-  currentPrice[pair]['CHANGE24HOURPCT'] = ((currentPrice[pair]['PRICE'] - currentPrice[pair]['OPEN24HOUR']) / currentPrice[pair]['OPEN24HOUR'] * 100).toFixed(2) + "%";
+  currentPrice[messageSubscription]['CHANGE24HOUR'] = CCC.convertValueToDisplay(tsym, (currentPrice[messageSubscription]['PRICE'] - currentPrice[messageSubscription]['OPEN24HOUR']));
+  currentPrice[messageSubscription]['CHANGE24HOURPCT'] = ((currentPrice[messageSubscription]['PRICE'] - currentPrice[messageSubscription]['OPEN24HOUR']) / currentPrice[messageSubscription]['OPEN24HOUR'] * 100).toFixed(2) + "%";
   return currentPrice;
 };
 
 // unpack volume message into dictionary
 var decorateWithFullVolume = function(message) {
+  var messageSubscription = getSubscriptionFromMessage(message);
   var volData = CCC.FULLVOLUME.unpack(message);
   var from = volData['SYMBOL'];
   var to = 'USD';
@@ -137,9 +146,9 @@ var decorateWithFullVolume = function(message) {
   var pair = from + to;
 
   currentPrice = {}
-  currentPrice[pair] = {};
+  currentPrice[messageSubscription] = {};
 
-  currentPrice[pair]['FULLVOLUMEFROM'] = parseFloat(volData['FULLVOLUME']);
-  currentPrice[pair]['FULLVOLUMETO'] = ((currentPrice[pair]['FULLVOLUMEFROM'] - currentPrice[pair]['VOLUME24HOUR']) * currentPrice[pair]['PRICE']) + currentPrice[pair]['VOLUME24HOURTO'];
+  currentPrice[messageSubscription]['FULLVOLUMEFROM'] = parseFloat(volData['FULLVOLUME']);
+  currentPrice[messageSubscription]['FULLVOLUMETO'] = ((currentPrice[messageSubscription]['FULLVOLUMEFROM'] - currentPrice[messageSubscription]['VOLUME24HOUR']) * currentPrice[messageSubscription]['PRICE']) + currentPrice[messageSubscription]['VOLUME24HOURTO'];
   return currentPrice;
 };
