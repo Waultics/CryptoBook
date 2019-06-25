@@ -1,18 +1,22 @@
-FROM python:3-slim
+FROM python:3
 
-# Install g++ and make to ensure dependencies install with python:3-slim.
-RUN apt-get -y update
-RUN apt-get -y install g++ make
+# Ensuring we have the latest Debian packages.
+RUN apt-get -y update && apt-get -y upgrade
 
-# Install NodeJS to the Alpine container (depedency).
+# Installing OpenSSL 1.1.1.
+RUN wget https://www.openssl.org/source/openssl-1.1.1a.tar.gz && \
+    tar -zxf openssl-1.1.1a.tar.gz
+WORKDIR openssl-1.1.1a
+RUN ./config && \
+    make && \
+    make test && \
+    mv /usr/bin/openssl ~/tmp && \
+    make install && \
+    ln -s /usr/local/bin/openssl /usr/bin/openssl && \
+    ldconfig
+
+# Installing NodeJS for CloudFlare captcha bypass.
 RUN apt-get -y install nodejs
-
-# Upgrade Alpine's system.
-RUN apt-get -y update
-RUN apt-get -y upgrade
-
-# Install NodeJS na OpenSSL to the Alpine container (depedency).
-RUN apt-get -y install openssl nodejs
 
 # Exposes this container's port 9900 to other containers.
 EXPOSE 9900
