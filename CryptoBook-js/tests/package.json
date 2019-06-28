@@ -1,0 +1,15 @@
+{
+  "name": "tests",
+  "version": "1.0.0",
+  "description": "unit testing for cryptocompare socket application",
+  "main": "test.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Alejandro Escontrela",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4"
+  }
+}
