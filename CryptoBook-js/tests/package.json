@@ -4,12 +4,13 @@
   "description": "unit testing for cryptocompare socket application",
   "main": "test.js",
   "scripts": {
-    "test": "mocha"
+    "test": "jshint ../ccc-streamer-utilities.js; mocha; jshint ../cryptocompare_streamer.js"
   },
   "author": "Alejandro Escontrela",
   "license": "ISC",
   "devDependencies": {
     "chai": "^4.2.0",
+    "jshint": "^2.10.2",
     "mocha": "^6.1.4"
   }
 }

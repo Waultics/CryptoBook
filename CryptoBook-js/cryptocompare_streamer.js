@@ -25,9 +25,9 @@ currentPrice = {};
 // intialize a server socket to connect to anybody who's interested
 var app = require('express')();
 var server = require('http').Server(app);
-const io_serv = require('socket.io')(server);
+var io_serv = require('socket.io')(server);
 
-server.listen(config['js']['port'], config['js']['host']);
+server.listen(config.js.port, config.js.host);
 
 io_serv.on('connection', function(connected_socket) {
   console.log("CONNECTED");

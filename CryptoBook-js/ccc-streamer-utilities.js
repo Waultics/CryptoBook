@@ -215,32 +215,21 @@ trade fields binary values always in the last ~
 */
 
 CCC.TRADE.FLAGS = {
-  'SELL': 0x1 // hex for binary 1
-    ,
-  'BUY': 0x2 // hex for binary 10
-    ,
+  'SELL': 0x1, // hex for binary 1
+  'BUY': 0x2, // hex for binary 10
   'UNKNOWN': 0x4 // hex for binary 100
-}
+};
 
 CCC.TRADE.FIELDS = {
-  'T': 0x0 // hex for binary 0, it is a special case of fields that are always there TYPE
-    ,
-  'M': 0x0 // hex for binary 0, it is a special case of fields that are always there MARKET
-    ,
-  'FSYM': 0x0 // hex for binary 0, it is a special case of fields that are always there FROM SYMBOL
-    ,
-  'TSYM': 0x0 // hex for binary 0, it is a special case of fields that are always there TO SYMBOL
-    ,
-  'F': 0x0 // hex for binary 0, it is a special case of fields that are always there FLAGS
-    ,
-  'ID': 0x1 // hex for binary 1                                                       ID
-    ,
-  'TS': 0x2 // hex for binary 10                                                      TIMESTAMP
-    ,
-  'Q': 0x4 // hex for binary 100                                                     QUANTITY
-    ,
-  'P': 0x8 // hex for binary 1000                                                    PRICE
-    ,
+  'T': 0x0, // hex for binary 0, it is a special case of fields that are always there TYPE
+  'M': 0x0, // hex for binary 0, it is a special case of fields that are always there MARKET
+  'FSYM': 0x0, // hex for binary 0, it is a special case of fields that are always there FROM SYMBOL
+  'TSYM': 0x0, // hex for binary 0, it is a special case of fields that are always there TO SYMBOL
+  'F': 0x0, // hex for binary 0, it is a special case of fields that are always there FLAGS
+  'ID': 0x1, // hex for binary 1                                                       ID
+  'TS': 0x2, // hex for binary 10                                                      TIMESTAMP
+  'Q': 0x4, // hex for binary 100                                                     QUANTITY
+  'P': 0x8, // hex for binary 1000                                                    PRICE
   'TOTAL': 0x10 // hex for binary 10000                                                   TOTAL
 };
 
@@ -322,8 +311,8 @@ CCC.TRADE.unpack = function(tradeString) {
 };
 
 CCC.TRADE.getKey = function(tradeObject) {
-  return tradeObject['T'] + '~' + tradeObject['M'] + '~' + tradeObject['FSYM'] +
-    '~' + tradeObject['TSYM'];
+  return tradeObject.T + '~' + tradeObject.M + '~' + tradeObject.FSYM +
+    '~' + tradeObject.TSYM;
 };
 
 CCC.CURRENT = CCC.CURRENT || {};
@@ -332,79 +321,45 @@ current fields mask values always in the last ~
 */
 
 CCC.CURRENT.FLAGS = {
-  'PRICEUP': 0x1 // hex for binary 1
-    ,
-  'PRICEDOWN': 0x2 // hex for binary 10
-    ,
-  'PRICEUNCHANGED': 0x4 // hex for binary 100
-    ,
-  'BIDUP': 0x8 // hex for binary 1000
-    ,
-  'BIDDOWN': 0x10 // hex for binary 10000
-    ,
-  'BIDUNCHANGED': 0x20 // hex for binary 100000
-    ,
-  'OFFERUP': 0x40 // hex for binary 1000000
-    ,
-  'OFFERDOWN': 0x80 // hex for binary 10000000
-    ,
-  'OFFERUNCHANGED': 0x100 // hex for binary 100000000
-    ,
-  'AVGUP': 0x200 // hex for binary 1000000000
-    ,
-  'AVGDOWN': 0x400 // hex for binary 10000000000
-    ,
+  'PRICEUP': 0x1, // hex for binary 1
+  'PRICEDOWN': 0x2, // hex for binary 10
+  'PRICEUNCHANGED': 0x4, // hex for binary 100
+  'BIDUP': 0x8, // hex for binary 1000
+  'BIDDOWN': 0x10, // hex for binary 10000
+  'BIDUNCHANGED': 0x20, // hex for binary 100000
+  'OFFERUP': 0x40, // hex for binary 1000000
+  'OFFERDOWN': 0x80, // hex for binary 10000000
+  'OFFERUNCHANGED': 0x100, // hex for binary 100000000
+  'AVGUP': 0x200, // hex for binary 1000000000
+  'AVGDOWN': 0x400, // hex for binary 10000000000
   'AVGUNCHANGED': 0x800 // hex for binary 100000000000
 };
 
 
 CCC.CURRENT.FIELDS = {
-  'TYPE': 0x0 // hex for binary 0, it is a special case of fields that are always there
-    ,
-  'MARKET': 0x0 // hex for binary 0, it is a special case of fields that are always there
-    ,
-  'FROMSYMBOL': 0x0 // hex for binary 0, it is a special case of fields that are always there
-    ,
-  'TOSYMBOL': 0x0 // hex for binary 0, it is a special case of fields that are always there
-    ,
-  'FLAGS': 0x0 // hex for binary 0, it is a special case of fields that are always there
-    ,
-  'PRICE': 0x1 // hex for binary 1
-    ,
-  'BID': 0x2 // hex for binary 10
-    ,
-  'OFFER': 0x4 // hex for binary 100
-    ,
-  'LASTUPDATE': 0x8 // hex for binary 1000
-    ,
-  'AVG': 0x10 // hex for binary 10000
-    ,
-  'LASTVOLUME': 0x20 // hex for binary 100000
-    ,
-  'LASTVOLUMETO': 0x40 // hex for binary 1000000
-    ,
-  'LASTTRADEID': 0x80 // hex for binary 10000000
-    ,
-  'VOLUMEHOUR': 0x100 // hex for binary 100000000
-    ,
-  'VOLUMEHOURTO': 0x200 // hex for binary 1000000000
-    ,
-  'VOLUME24HOUR': 0x400 // hex for binary 10000000000
-    ,
-  'VOLUME24HOURTO': 0x800 // hex for binary 100000000000
-    ,
-  'OPENHOUR': 0x1000 // hex for binary 1000000000000
-    ,
-  'HIGHHOUR': 0x2000 // hex for binary 10000000000000
-    ,
-  'LOWHOUR': 0x4000 // hex for binary 100000000000000
-    ,
-  'OPEN24HOUR': 0x8000 // hex for binary 1000000000000000
-    ,
-  'HIGH24HOUR': 0x10000 // hex for binary 10000000000000000
-    ,
-  'LOW24HOUR': 0x20000 // hex for binary 100000000000000000
-    ,
+  'TYPE': 0x0, // hex for binary 0, it is a special case of fields that are always there
+  'MARKET': 0x0, // hex for binary 0, it is a special case of fields that are always there
+  'FROMSYMBOL': 0x0, // hex for binary 0, it is a special case of fields that are always there
+  'TOSYMBOL': 0x0, // hex for binary 0, it is a special case of fields that are always there
+  'FLAGS': 0x0, // hex for binary 0, it is a special case of fields that are always there
+  'PRICE': 0x1, // hex for binary 1
+  'BID': 0x2, // hex for binary 10
+  'OFFER': 0x4, // hex for binary 100
+  'LASTUPDATE': 0x8, // hex for binary 1000
+  'AVG': 0x10, // hex for binary 10000
+  'LASTVOLUME': 0x20, // hex for binary 100000
+  'LASTVOLUMETO': 0x40, // hex for binary 1000000
+  'LASTTRADEID': 0x80, // hex for binary 10000000
+  'VOLUMEHOUR': 0x100, // hex for binary 100000000
+  'VOLUMEHOURTO': 0x200, // hex for binary 1000000000
+  'VOLUME24HOUR': 0x400, // hex for binary 10000000000
+  'VOLUME24HOURTO': 0x800, // hex for binary 100000000000
+  'OPENHOUR': 0x1000, // hex for binary 1000000000000
+  'HIGHHOUR': 0x2000, // hex for binary 10000000000000
+  'LOWHOUR': 0x4000, // hex for binary 100000000000000
+  'OPEN24HOUR': 0x8000, // hex for binary 1000000000000000
+  'HIGH24HOUR': 0x10000, // hex for binary 10000000000000000
+  'LOW24HOUR': 0x20000, // hex for binary 100000000000000000
   'LASTMARKET': 0x40000 // hex for binary 1000000000000000000, this is a special case and will only appear on CCCAGG messages
 };
 
@@ -578,8 +533,8 @@ CCC.CURRENT.unpack = function(value) {
   return unpackedCurrent;
 };
 CCC.CURRENT.getKey = function(currentObject) {
-  return currentObject['TYPE'] + '~' + currentObject['MARKET'] + '~' +
-    currentObject['FROMSYMBOL'] + '~' + currentObject['TOSYMBOL'];
+  return currentObject.TYPE + '~' + currentObject.MARKET + '~' +
+    currentObject.FROMSYMBOL + '~' + currentObject.TOSYMBOL;
 };
 CCC.CURRENT.getKeyFromStreamerData = function(streamerData) {
   var valuesArray = streamerData.split("~");
@@ -647,7 +602,7 @@ CCC.filterNumberFunctionPolyfill = function(value, decimals) {
   var parts = numberWithCorrectDecimals.toString().split(".");
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return parts.join(".");
-}
+};
 
 CCC.convertValueToDisplay = function(symbol, value, type, fullNumbers) {
   var prefix = '';
@@ -721,14 +676,14 @@ CCC.UTILS.getSubscriptionFromMessage = function(message) {
   return message.substring(
     0,
     message.split("~", 4).join("~").length);
-}
+};
 
 CCC.UTILS.dataUnpackCurrent = function(message, currentPrice) {
   var messageSubscription = CCC.UTILS.getSubscriptionFromMessage(message);
   var data = CCC.CURRENT.unpack(message);
 
-  var from = data['FROMSYMBOL'];
-  var to = data['TOSYMBOL'];
+  var from = data.FROMSYMBOL;
+  var to = data.TOSYMBOL;
 
   var fsym = CCC.STATIC.CURRENCY.getSymbol(from);
   var tsym = CCC.STATIC.CURRENCY.getSymbol(to);
@@ -744,14 +699,14 @@ CCC.UTILS.dataUnpackCurrent = function(message, currentPrice) {
   }
 
   return currentPrice;
-}
+};
 
 CCC.UTILS.dataUnpackTrade = function(message, currentPrice) {
   var messageSubscription = CCC.UTILS.getSubscriptionFromMessage(message);
   var data = CCC.TRADE.unpack(message);
 
-  var from = data['FSYM'];
-  var to = data['TSYM'];
+  var from = data.FSYM;
+  var to = data.TSYM;
 
   var fsym = CCC.STATIC.CURRENCY.getSymbol(from);
   var tsym = CCC.STATIC.CURRENCY.getSymbol(to);
@@ -766,15 +721,15 @@ CCC.UTILS.dataUnpackTrade = function(message, currentPrice) {
     currentPrice[messageSubscription][key] = data[key];
   }
   return currentPrice;
-}
+};
 
 
 CCC.UTILS.dataUnpack = function(message, currentPrice) {
   var messageSubscription = CCC.UTILS.getSubscriptionFromMessage(message);
   var data = CCC.CURRENT.unpack(message);
 
-  var from = data['FROMSYMBOL'];
-  var to = data['TOSYMBOL'];
+  var from = data.FROMSYMBOL;
+  var to = data.TOSYMBOL;
   var fsym = CCC.STATIC.CURRENCY.getSymbol(from);
   var tsym = CCC.STATIC.CURRENCY.getSymbol(to);
   var pair = from + to;
@@ -787,17 +742,16 @@ CCC.UTILS.dataUnpack = function(message, currentPrice) {
     currentPrice[messageSubscription][key] = data[key];
   }
 
-  if (currentPrice[messageSubscription]['LASTTRADEID']) {
-    currentPrice[messageSubscription]['LASTTRADEID'] = parseInt(currentPrice[
-      messageSubscription]['LASTTRADEID']).toFixed(0);
+  if (currentPrice[messageSubscription].LASTTRADEID) {
+    currentPrice[messageSubscription].LASTTRADEID = parseInt(currentPrice[
+      messageSubscription].LASTTRADEID).toFixed(0);
   }
-  currentPrice[messageSubscription]['CHANGE24HOUR'] = CCC.convertValueToDisplay(
-    tsym, (currentPrice[messageSubscription]['PRICE'] - currentPrice[
-      messageSubscription]['OPEN24HOUR']));
-  currentPrice[messageSubscription]['CHANGE24HOURPCT'] = ((currentPrice[
-      messageSubscription]['PRICE'] - currentPrice[messageSubscription][
-      'OPEN24HOUR'
-    ]) / currentPrice[messageSubscription]['OPEN24HOUR'] * 100).toFixed(2) +
+  currentPrice[messageSubscription].CHANGE24HOUR = CCC.convertValueToDisplay(
+    tsym, (currentPrice[messageSubscription].PRICE - currentPrice[
+      messageSubscription].OPEN24HOUR));
+  currentPrice[messageSubscription].CHANGE24HOURPCT = ((currentPrice[
+      messageSubscription].PRICE - currentPrice[messageSubscription].OPEN24HOUR) /
+      currentPrice[messageSubscription].OPEN24HOUR * 100).toFixed(2) +
     "%";
   return currentPrice;
 };
@@ -805,7 +759,7 @@ CCC.UTILS.dataUnpack = function(message, currentPrice) {
 CCC.UTILS.decorateWithFullVolume = function(message, currentPrice) {
   var messageSubscription = CCC.UTILS.getSubscriptionFromMessage(message);
   var volData = CCC.FULLVOLUME.unpack(message);
-  var from = volData['SYMBOL'];
+  var from = volData.SYMBOL;
   var to = 'USD';
   var fsym = CCC.STATIC.CURRENCY.getSymbol(from);
   var tsym = CCC.STATIC.CURRENCY.getSymbol(to);
@@ -815,13 +769,13 @@ CCC.UTILS.decorateWithFullVolume = function(message, currentPrice) {
     currentPrice[messageSubscription] = {};
   }
 
-  currentPrice[messageSubscription]['FULLVOLUMEFROM'] = parseFloat(volData[
-    'FULLVOLUME']);
-  currentPrice[messageSubscription]['FULLVOLUMETO'] = (
-      (currentPrice[messageSubscription]['FULLVOLUMEFROM'] -
-        currentPrice[messageSubscription]['VOLUME24HOUR']) *
-      currentPrice[messageSubscription]['PRICE']) +
-    currentPrice[messageSubscription]['VOLUME24HOURTO'];
+  currentPrice[messageSubscription].FULLVOLUMEFROM = parseFloat(
+      volData.FULLVOLUME);
+  currentPrice[messageSubscription].FULLVOLUMETO = (
+      (currentPrice[messageSubscription].FULLVOLUMEFROM -
+        currentPrice[messageSubscription].VOLUME24HOUR) *
+      currentPrice[messageSubscription].PRICE) +
+    currentPrice[messageSubscription].VOLUME24HOURTO;
   return currentPrice;
 };
 
