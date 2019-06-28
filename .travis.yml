@@ -1,25 +1,25 @@
 matrix:
     dist: xenial
     include:
-        language: python
-        python:
-            - "3.5"
-            - "3.6"
-            - "3.7"
-        install:
-            - pip install -r CryptoBook-py/requirements/dev.txt
-            - pip install pytest-cov
-            - pip install coveralls
-        script:
-            - pytest --cov=CryptoBook-py/
-        after_success:
-            - coveralls
-    include:
-        language: node_js
-        node_js:
-            - "stable"
-        cache:
-            - "CryptoBook-js/tests/node_modules"
-        before_script:
-            - cd CryptoBook-js/tests/node_modules
-        script: npm test
+        - language: python
+          python:
+              - "3.5"
+              - "3.6"
+              - "3.7"
+          install:
+              - pip install -r CryptoBook-py/requirements/dev.txt
+              - pip install pytest-cov
+              - pip install coveralls
+          script:
+              - pytest --cov=CryptoBook-py/
+          after_success:
+              - coveralls
+
+        - language: node_js
+          node_js:
+              - "stable"
+          cache:
+              - "CryptoBook-js/tests/node_modules"
+          before_script:
+              - cd CryptoBook-js/tests/node_modules
+          script: npm test
