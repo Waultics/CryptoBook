@@ -19,6 +19,9 @@ var config = yaml.safeLoad(fs.readFileSync('config.yml', 'utf8'));
 var io = require('socket.io-client');
 var socket = io.connect('https://streamer.cryptocompare.com/');
 
+// this dictionary contains the most up-to-date crypto data
+currentPrice = {};
+
 // intialize a server socket to connect to anybody who's interested
 var app = require('express')();
 var server = require('http').Server(app);
@@ -26,13 +29,15 @@ const io_serv = require('socket.io')(server);
 
 server.listen(config['js']['port'], config['js']['host']);
 
-io_serv.on('connection', function(connected_socket){
+io_serv.on('connection', function(connected_socket) {
   console.log("CONNECTED");
   connected_socket.on('subscribe', function(subscriptions) {
-    subscriptions.forEach(function (subscription, index) {
+    subscriptions.forEach(function(subscription, index) {
       connected_socket.join(subscription);
     });
-    socket.emit('SubAdd', { subs: subscriptions });
+    socket.emit('SubAdd', {
+      subs: subscriptions
+    });
   });
 });
 
@@ -41,114 +46,21 @@ io_serv.on('connection', function(connected_socket){
 // each time a message is recieved.
 socket.on("m", function(message) {
   var messageType = message.substring(0, message.indexOf("~"));
-  var messageSubscription = getSubscriptionFromMessage(message);
-
+  var messageSubscription = CCC.UTILS.getSubscriptionFromMessage(message);
+  console.log(message);
   console.log(messageSubscription);
 
   if (messageType == CCC.STATIC.TYPE.CURRENTAGG) {
-    unpacked = dataUnpack(message);
+    currentPrice = CCC.UTILS.dataUnpack(message, currentPrice);
   } else if (messageType == CCC.STATIC.TYPE.FULLVOLUME) {
-    unpacked = decorateWithFullVolume(message);
+    currentPrice = CCC.UTILS.decorateWithFullVolume(message, currentPrice);
   } else if (messageType == CCC.STATIC.TYPE.TRADE) {
-    unpacked = dataUnpackTrade(message);
+    currentPrice = CCC.UTILS.dataUnpackTrade(message, currentPrice);
   } else if (messageType == CCC.STATIC.TYPE.CURRENT) {
-    unpacked = dataUnpackCurrent(message);
+    currentPrice = CCC.UTILS.dataUnpackCurrent(message, currentPrice);
   }
-
+  unpacked = currentPrice[messageSubscription];
+  console.log(unpacked);
   io_serv.sockets.in(messageSubscription).emit('response', unpacked);
-// io_serv.sockets.emit('response', {market_data: currentPrice});
+  // io_serv.sockets.emit('response', {market_data: currentPrice});
 });
-
-var getSubscriptionFromMessage = function(message) {
-      return  message.substring(
-          0,
-          message.split("~", 4).join("~").length);
-}
-
-var dataUnpackCurrent = function(message) {
-  var messageSubscription = getSubscriptionFromMessage(message);
-  var data = CCC.CURRENT.unpack(message);
-
-  var from = data['FROMSYMBOL'];
-  var to = data['TOSYMBOL'];
-
-  var fsym = CCC.STATIC.CURRENCY.getSymbol(from);
-  var tsym = CCC.STATIC.CURRENCY.getSymbol(to);
-
-  var pair = from + to;
-
-  var currentPrice = {};
-  currentPrice[messageSubscription] = {};
-
-  for (var key in data) {
-    currentPrice[messageSubscription][key] = data[key];
-  }
-
-  return currentPrice;
-}
-
-var dataUnpackTrade = function(message) {
-  var messageSubscription = getSubscriptionFromMessage(message);
-  var data = CCC.TRADE.unpack(message);
-
-  var from = data['FSYM'];
-  var to = data['TSYM'];
-
-  var fsym = CCC.STATIC.CURRENCY.getSymbol(from);
-  var tsym = CCC.STATIC.CURRENCY.getSymbol(to);
-
-  var pair = from + to;
-
-  // this dictionary contains the most up-to-date crypto data
-  var currentPrice = {};
-  currentPrice[messageSubscription] = {};
-
-  for (var key in data) {
-    currentPrice[messageSubscription][key] = data[key];
-  }
-  return currentPrice;
-}
-
-// unpack data message into dictionary
-var dataUnpack = function(message) {
-  var messageSubscription = getSubscriptionFromMessage(message);
-  var data = CCC.CURRENT.unpack(message);
-
-  var from = data['FROMSYMBOL'];
-  var to = data['TOSYMBOL'];
-  var fsym = CCC.STATIC.CURRENCY.getSymbol(from);
-  var tsym = CCC.STATIC.CURRENCY.getSymbol(to);
-  var pair = from + to;
-
-  currentPrice = {}
-  currentPrice[messageSubscription] = {};
-
-  for (var key in data) {
-    currentPrice[messageSubscription][key] = data[key];
-  }
-
-  if (currentPrice[messageSubscription]['LASTTRADEID']) {
-    currentPrice[messageSubscription]['LASTTRADEID'] = parseInt(currentPrice[messageSubscription]['LASTTRADEID']).toFixed(0);
-  }
-  currentPrice[messageSubscription]['CHANGE24HOUR'] = CCC.convertValueToDisplay(tsym, (currentPrice[messageSubscription]['PRICE'] - currentPrice[messageSubscription]['OPEN24HOUR']));
-  currentPrice[messageSubscription]['CHANGE24HOURPCT'] = ((currentPrice[messageSubscription]['PRICE'] - currentPrice[messageSubscription]['OPEN24HOUR']) / currentPrice[messageSubscription]['OPEN24HOUR'] * 100).toFixed(2) + "%";
-  return currentPrice;
-};
-
-// unpack volume message into dictionary
-var decorateWithFullVolume = function(message) {
-  var messageSubscription = getSubscriptionFromMessage(message);
-  var volData = CCC.FULLVOLUME.unpack(message);
-  var from = volData['SYMBOL'];
-  var to = 'USD';
-  var fsym = CCC.STATIC.CURRENCY.getSymbol(from);
-  var tsym = CCC.STATIC.CURRENCY.getSymbol(to);
-  var pair = from + to;
-
-  currentPrice = {}
-  currentPrice[messageSubscription] = {};
-
-  currentPrice[messageSubscription]['FULLVOLUMEFROM'] = parseFloat(volData['FULLVOLUME']);
-  currentPrice[messageSubscription]['FULLVOLUMETO'] = ((currentPrice[messageSubscription]['FULLVOLUMEFROM'] - currentPrice[messageSubscription]['VOLUME24HOUR']) * currentPrice[messageSubscription]['PRICE']) + currentPrice[messageSubscription]['VOLUME24HOURTO'];
-  return currentPrice;
-};
