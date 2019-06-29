@@ -47,8 +47,7 @@ io_serv.on('connection', function(connected_socket) {
 socket.on("m", function(message) {
   var messageType = message.substring(0, message.indexOf("~"));
   var messageSubscription = CCC.UTILS.getSubscriptionFromMessage(message);
-  console.log(message);
-  console.log(messageSubscription);
+
 
   if (messageType == CCC.STATIC.TYPE.CURRENTAGG) {
     currentPrice = CCC.UTILS.dataUnpack(message, currentPrice);
@@ -60,7 +59,6 @@ socket.on("m", function(message) {
     currentPrice = CCC.UTILS.dataUnpackCurrent(message, currentPrice);
   }
   unpacked = currentPrice[messageSubscription];
-  console.log(unpacked);
   io_serv.sockets.in(messageSubscription).emit('response', unpacked);
   // io_serv.sockets.emit('response', {market_data: currentPrice});
 });
