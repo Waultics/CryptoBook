@@ -1,5 +1,5 @@
 ccxt
-sanic
+sanic==1.0.0
 pyyaml
 aiohttp
 pandas
