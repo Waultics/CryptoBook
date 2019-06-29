@@ -59,6 +59,10 @@ socket.on("m", function(message) {
     currentPrice = CCC.UTILS.dataUnpackCurrent(message, currentPrice);
   }
   unpacked = currentPrice[messageSubscription];
-  io_serv.sockets.in(messageSubscription).emit('response', unpacked);
+
+  var returnMsg = {};
+  returnMsg[messageSubscription] = unpacked;
+
+  io_serv.sockets.in(messageSubscription).emit('response', returnMsg);
   // io_serv.sockets.emit('response', {market_data: currentPrice});
 });
