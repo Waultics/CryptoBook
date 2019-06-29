@@ -6,6 +6,8 @@ matrix:
               - "3.5"
               - "3.6"
               - "3.7"
+          before_install:
+              - pip install --upgrade pip
           install:
               - pip install -r CryptoBook-py/requirements/dev.txt
               - pip install pytest-cov
