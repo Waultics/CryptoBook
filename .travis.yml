@@ -20,8 +20,7 @@ matrix:
         - language: node_js
           node_js:
               - "stable"
-          cache:
-              - "CryptoBook-js/tests/node_modules"
           before_script:
-              - cd CryptoBook-js/tests/node_modules
+              - cd CryptoBook-js/tests
+              - npm install
           script: npm test
