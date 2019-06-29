@@ -2,6 +2,8 @@ from CryptoBook import api
 import pytest
 import json
 
+import sys
+print(sys.path)
 
 @pytest.yield_fixture
 def app():

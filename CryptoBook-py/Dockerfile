@@ -25,9 +25,9 @@ EXPOSE 9900
 WORKDIR /usr/src/app/CryptoBook
 
 # Copies our project and its requirements.txt over to the dir above.
-COPY requirements/base.txt .
+COPY CryptoBook-py/requirements/base.txt .
 COPY config.yml .
-COPY CryptoBook/ ./CryptoBook
+COPY CryptoBook-py/CryptoBook/ ./CryptoBook
 
 # Installs the requirements of our project.
 RUN pip install --no-cache-dir -r base.txt

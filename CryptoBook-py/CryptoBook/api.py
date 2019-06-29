@@ -13,7 +13,7 @@ def load_config():
     with open("config.yml", "r") as ymlfile:
         config = yaml.safe_load(ymlfile)
 
-    return config["host"], config["port"]
+    return config["py"]["host"], config["py"]["port"]
 
 
 @app.route("/api/v1/cryptobook/ip")
