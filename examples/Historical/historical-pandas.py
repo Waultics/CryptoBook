@@ -9,7 +9,7 @@ data = {
     "timeframe": "1h",
     "start": "2018-01-01 00:00:00",
     "end": "2018-01-02 00:00:00",
-    "cfbypass": True,  # Optional flag if exchange uses CloudFlare.
+    "cfbypass": False,  # Optional flag if exchange uses CloudFlare.
 }
 request_before = datetime.now()
 
