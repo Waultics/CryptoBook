@@ -16,7 +16,7 @@ async def ip():
 
     try:
         resp = await get_ip()
-    except Exception as e:
+    except Exception as e:  # pragma: no cover
         return {"error": "server_error", "description": str(e)}, 400
 
     return resp, 200
@@ -57,7 +57,7 @@ async def exchange_info(request):
         resp = await get_exchange_info(exchange=exchange)
     except NetworkError as e:
         return {"error": "network_error", "description": str(e)}, 400
-    except Exception as e:
+    except Exception as e:  # pragma: no cover
         return {"error": "server_error", "description": str(e)}, 400
 
     # Returns the request.
@@ -166,9 +166,9 @@ async def historical_data(request):
         resp = await get_historical_data(**request)
     except ExchangeDataAccuracyError as e:
         return {"error": "exchange_data_accuracy_error", "description": str(e)}, 400
-    except NetworkError as e:
+    except NetworkError as e:  # pragma: no cover
         return {"error": "network_error", "description": str(e)}, 400
-    except Exception as e:
+    except Exception as e:  # pragma: no cover
         return {"error": "server_error", "description": str(e)}, 400
 
     # Returns true if all the checks passes with the loaded exchange.
