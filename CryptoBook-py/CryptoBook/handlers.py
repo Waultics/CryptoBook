@@ -6,7 +6,7 @@ from datetime import datetime
 import ccxt.async_support as ccxt_async
 
 
-async def handle(func, *args, **kwargs):
+async def handle(func, *args, **kwargs):  # pragma: no cover
     """ Function to handle internal server errors.
 
         args:
