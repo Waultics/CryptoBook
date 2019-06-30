@@ -19,9 +19,9 @@ async def handle(func, *args, **kwargs):  # pragma: no cover
         resp = await func(*args, **kwargs)
     except ExchangeDataAccuracyError as e:
         return {"error": "exchange_data_accuracy_error", "description": str(e)}, 400
-    except NetworkError as e:  # pragma: no cover
+    except NetworkError as e:
         return {"error": "network_error", "description": str(e)}, 400
-    except Exception as e:  # pragma: no cover
+    except Exception as e:
         return {"error": "server_error", "description": str(e)}, 400
     return resp, 200
 
