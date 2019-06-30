@@ -1,8 +1,8 @@
-from utils import get_ip, exchange_info, historical_data
-from validators import check_exchange_info, check_historical_data
+from handlers import ip, exchange_info, historical_data
 
 from sanic.response import json
 from sanic import Sanic
+import urllib3
 import yaml
 
 app = Sanic()
@@ -17,47 +17,30 @@ def load_config():
 
 
 @app.route("/api/v1/cryptobook/ip")
-async def api_get_ip(request):
+async def api_ip(request):
     """ Returns the public IP address of the API server. """
-    return json(await get_ip())
+    response, status = await ip()
+    return json(body=response, status=status)
 
 
-@app.route("/api/v1/cryptobook/exchange/<exchange_name:[A-z]+>")
-async def api_exchange_info(request, exchange_name):
+@app.route("/api/v1/cryptobook/exchange/<exchange:[A-z]+>")
+async def api_exchange_info(request, exchange):
     """ Returns information about the exchange. """
-    valid_request, status, response = await check_exchange_info(exchange_name)
-    if not valid_request:
-        return json(response, status=status)
-    else:
-        return json(await exchange_info(exchange=exchange_name), status=200)
+    response, status = await exchange_info(exchange)
+    return json(body=response, status=status)
 
 
 @app.route("/api/v1/cryptobook/historical", methods=["POST"])
 async def api_historical_data(request):
     """ Returns historical exchange data. """
-
-    valid_request, status, response = await check_historical_data(request.json)
-    if not valid_request:
-        return json(response, status=status)
-    else:
-        req = {
-            "exchange": request.json["exchange"],
-            "symbol": request.json["symbol"],
-            "timeframe": request.json["timeframe"],
-            "start": request.json["start"],
-            "end": request.json["end"],
-        }
-
-        if "cfbypass" in request.json:
-            return json(
-                await historical_data(**req, cfbypass=request.json["cfbypass"]),
-                status=200,
-            )
-        else:
-            return json(await historical_data(**req), status=200)
+    response, status = await historical_data(request.json)
+    return json(body=response, status=status)
 
 
-# 'pragma' line below insures Coverall does not bother checking this function for coverage.
 if __name__ == "__main__":  # pragma: no cover
+    # Disables urllib3 warnings about SSL certificates.
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+    # Loads app config, and runs it.
     host, port = load_config()
     app.run(host=host, port=port)
