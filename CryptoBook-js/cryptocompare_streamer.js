@@ -51,8 +51,6 @@ socket.on("m", function(message) {
   var messageType = message.substring(0, message.indexOf("~"));
   var messageSubscription = CCC.UTILS.getSubscriptionFromMessage(message);
 
-  // console.log(messageSubscription);
-
   if (messageType == CCC.STATIC.TYPE.CURRENTAGG) {
     currentPrice = CCC.UTILS.dataUnpack(message, currentPrice);
   } else if (messageType == CCC.STATIC.TYPE.FULLVOLUME) {
@@ -71,7 +69,6 @@ socket.on("m", function(message) {
                                   config.js.namespace,
                                   'response',
                                   returnMsg);
-  // io_serv.sockets.in(messageSubscription).emit('response', returnMsg);
 });
 
 function emitToSocketsInRoomAndNamespace(room_name, namespace, event_name, returnMsg) {
