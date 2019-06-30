@@ -25,12 +25,12 @@ currentPrice = {};
 // intialize a server socket to connect to anybody who's interested
 var app = require('express')();
 var server = require('http').Server(app);
+server.listen(config.js.port, config.js.host);
 var io_serv = require('socket.io')(server);
 
-server.listen(config.js.port, config.js.host);
-
-io_serv.on('connection', function(connected_socket) {
-  console.log("CONNECTED");
+io_serv.of(config.js.namespace)
+  .on('connection', function(connected_socket) {
+  console.log(connected_socket.id + " CONNECTED");
   connected_socket.on('subscribe', function(subscriptions) {
     subscriptions.forEach(function(subscription, index) {
       connected_socket.join(subscription);
@@ -38,6 +38,9 @@ io_serv.on('connection', function(connected_socket) {
     socket.emit('SubAdd', {
       subs: subscriptions
     });
+  });
+  connected_socket.on('disconnect', function() {
+      console.log(connected_socket.id + " DISCONNECTED");
   });
 });
 
@@ -48,6 +51,7 @@ socket.on("m", function(message) {
   var messageType = message.substring(0, message.indexOf("~"));
   var messageSubscription = CCC.UTILS.getSubscriptionFromMessage(message);
 
+  // console.log(messageSubscription);
 
   if (messageType == CCC.STATIC.TYPE.CURRENTAGG) {
     currentPrice = CCC.UTILS.dataUnpack(message, currentPrice);
@@ -63,6 +67,21 @@ socket.on("m", function(message) {
   var returnMsg = {};
   returnMsg[messageSubscription] = unpacked;
 
-  io_serv.sockets.in(messageSubscription).emit('response', returnMsg);
-  // io_serv.sockets.emit('response', {market_data: currentPrice});
+  emitToSocketsInRoomAndNamespace(messageSubscription,
+                                  config.js.namespace,
+                                  'response',
+                                  returnMsg);
+  // io_serv.sockets.in(messageSubscription).emit('response', returnMsg);
 });
+
+function emitToSocketsInRoomAndNamespace(room_name, namespace, event_name, returnMsg) {
+  ns = io_serv.of(namespace || "/");
+  if (ns) {
+    for (var id in ns.connected) {
+      var rooms_of = Object.keys(ns.connected[id].rooms);
+      if (rooms_of.includes(room_name)) {
+        ns.connected[id].emit(event_name, returnMsg);
+      }
+    }
+  }
+}

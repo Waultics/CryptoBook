@@ -4,3 +4,4 @@ py:
 js:
     host: 0.0.0.0
     port: 5050
+    namespace: '/api/v1/real_time'
