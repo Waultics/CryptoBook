@@ -111,7 +111,7 @@ async def get_historical_data(exchange, symbol, timeframe, start, end, cfbypass=
             resp_first = ex.fetch_ohlcv(symbol, timeframe, time_start)
         else:
             resp_first = await ex.fetch_ohlcv(symbol, timeframe, time_start)
-    except ccxt.NetworkError as e:
+    except ccxt.NetworkError as e:  # pragma: no cover
         raise NetworkError("Error loading the data. {}".format(e))
 
     # The interval of data in which the market is replying by.
@@ -137,7 +137,7 @@ async def get_historical_data(exchange, symbol, timeframe, start, end, cfbypass=
             responses = await asyncio.gather(
                 *[ex.fetch_ohlcv(symbol, timeframe, time) for time in times]
             )
-    except ccxt.NetworkError as e:
+    except ccxt.NetworkError as e:  # pragma: no cover
         raise NetworkError("Error loading the data. {}".format(e))
 
     # Appends all of our results to the DataFrame.
@@ -156,14 +156,16 @@ async def get_historical_data(exchange, symbol, timeframe, start, end, cfbypass=
     last_time = df.iloc[-1]["Time"]
 
     # Raise error if the first time in the DataFrame is inaccurate by more than 1%.
-    if not abs(first_time - time_start_copy) < time_start_copy * 0.01:
+    if (
+        not abs(first_time - time_start_copy) < time_start_copy * 0.01
+    ):  # pragma: no cover
         raise ExchangeDataAccuracyError(
             "Could not retrieve dates from this exchange."
             "Server responded with a different time start range."
         )
 
     # Raise error if the last time in the DataFrame is inaccurate by more than 1%.
-    if not abs(last_time - time_end) < time_end * 0.01:
+    if not abs(last_time - time_end) < time_end * 0.01:  # pragma: no cover
         raise ExchangeDataAccuracyError(
             "Could not retrieve dates from this exchange."
             "Server responded with a different time end range."
