@@ -11,13 +11,13 @@ async def test_get_ip():
 @pytest.mark.asyncio
 async def test_get_exchange_info():
     """ Tests to verify that get_exchange_info() function returns a dictionary without error. """
-    assert type(await utils.exchange_info("binance")) == dict
+    assert type(await utils.get_exchange_info("binance")) == dict
 
 
 @pytest.mark.asyncio
 async def test_get_historical_data():
     """ Checks that with valid input get_historical_data() function returns a json string. """
-    call = await utils.historical_data(
+    call = await utils.get_historical_data(
         exchange="binance",
         symbol="ETH/BTC",
         timeframe="15m",
