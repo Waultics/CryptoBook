@@ -12,3 +12,4 @@ docs/_build/
 
 # Pyenv + Virtualenv
 .python-version
+.ropeproject
