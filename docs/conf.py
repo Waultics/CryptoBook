@@ -12,7 +12,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../Cryptobook-py'))
+sys.path.insert(0, os.path.abspath('../CryptoBook-py'))
 
 
 # -- Project information -----------------------------------------------------
