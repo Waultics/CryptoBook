@@ -55,7 +55,7 @@ async def exchange_info(request):
     # Attempts to get the request.
     try:
         resp = await get_exchange_info(exchange=exchange)
-    except NetworkError as e:
+    except NetworkError as e:  # pragma: no cover
         return {"error": "network_error", "description": str(e)}, 400
     except Exception as e:  # pragma: no cover
         return {"error": "server_error", "description": str(e)}, 400
