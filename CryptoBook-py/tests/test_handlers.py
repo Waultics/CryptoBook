@@ -32,9 +32,9 @@ class Test_historical_data(object):
         data = {
             "exchange": "random_unknown_name",
             "symbol": "ETH/BTC",
-            "timeframe": "1m",
+            "timeframe": "1h",
             "start": "2018-01-01 00:00:00",
-            "end": "2018-05-01 00:00:00",
+            "end": "2018-01-02 00:00:00",
         }
         response, status = await handlers.historical_data(data)
         assert response["error"] == "exchange_error"
@@ -45,12 +45,25 @@ class Test_historical_data(object):
         data = {
             "exchange": "coinmarketcap",
             "symbol": "ETH/BTC",
-            "timeframe": "1m",
+            "timeframe": "1h",
             "start": "2018-01-01 00:00:00",
-            "end": "2018-05-01 00:00:00",
+            "end": "2018-01-02 00:00:00",
         }
         response, status = await handlers.historical_data(data)
         assert response["error"] == "historical_error"
+        assert status == 400
+
+    async def test_exchange_support_for_proper_historical(self):
+        """ Checking if valid exchange returns the proper historical data. """
+        data = {
+            "exchange": "kraken",
+            "symbol": "ETH/USD",
+            "timeframe": "1h",
+            "start": "2018-01-01 00:00:00",
+            "end": "2018-01-02 00:00:00",
+        }
+        response, status = await handlers.historical_data(data)
+        assert response["error"] == "exchange_data_accuracy_error"
         assert status == 400
 
     async def test_exchange_support_for_timeframe(self):
@@ -60,7 +73,7 @@ class Test_historical_data(object):
             "symbol": "ETH/BTC",
             "timeframe": "2m",
             "start": "2018-01-01 00:00:00",
-            "end": "2018-05-01 00:00:00",
+            "end": "2018-01-02 00:00:00",
         }
         response, status = await handlers.historical_data(data)
         assert response["error"] == "timeframe_error"
@@ -71,9 +84,9 @@ class Test_historical_data(object):
         data = {
             "exchange": "binance",
             "symbol": "ETH/USD",
-            "timeframe": "1m",
+            "timeframe": "1h",
             "start": "2018-01-01 00:00:00",
-            "end": "2018-05-01 00:00:00",
+            "end": "2018-01-02 00:00:00",
         }
         response, status = await handlers.historical_data(data)
         assert response["error"] == "symbol_error"

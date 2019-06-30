@@ -2,8 +2,6 @@ from CryptoBook import api
 import pytest
 import json
 
-import sys
-print(sys.path)
 
 @pytest.yield_fixture
 def app():
@@ -64,9 +62,9 @@ class Test_historical_data(object):
         data = {
             "exchange": "binance",
             "symbol": "ETH/BTC",
-            "timeframe": "1m",
+            "timeframe": "1h",
             "start": "2018-01-01 00:00:00",
-            "end": "2018-05-01 00:00:00",
+            "end": "2018-01-02 00:00:00",
         }
         resp = await application.post(
             "/api/v1/cryptobook/historical", data=json.dumps(data)
@@ -80,9 +78,9 @@ class Test_historical_data(object):
         data = {
             "exchange": "binance",
             "symbol": "ETH/BTC",
-            "timeframe": "1m",
+            "timeframe": "1h",
             "start": "2018-01-01 00:00:00",
-            "end": "2018-05-01 00:00:00",
+            "end": "2018-01-02 00:00:00",
             "cfbypass": True,
         }
         resp = await application.post(
