@@ -1,54 +1,88 @@
+from utils import get_ip, get_exchange_info, get_historical_data
+from errors import ExchangeDataAccuracyError, NetworkError
+
 from cerberus import Validator
 from datetime import datetime
 import ccxt.async_support as ccxt_async
 
 
-async def check_exchange_info(exchange):
-    """ Checks to see if the exchange is valid.
+async def handle(func, *args, **kwargs):  # pragma: no cover
+    """ Function to handle internal server errors.
 
-    Args:
-        exchange (str): The name of the exchange to check.
-
-    :returns:
-        - **valid_request** (*bool*): Boolean representing whether or not check was successfull or failure.
-        - **status** (*int*): HTTP code corresponding to the data validation. None if return bool above is true.
-        - **response** (*dict*): The response by the validator; details about an error.
+        args:
+            func (function): Function that will be called safely.
+            *args: Unnamed variables to be called by func.
+            **kwargs: Named variables to be called by func.
     """
 
     try:
+        resp = await func(*args, **kwargs)
+    except ExchangeDataAccuracyError as e:
+        return {"error": "exchange_data_accuracy_error", "description": str(e)}, 400
+    except NetworkError as e:
+        return {"error": "network_error", "description": str(e)}, 400
+    except Exception as e:
+        return {"error": "server_error", "description": str(e)}, 400
+    return resp, 200
+
+
+async def ip():
+    """  Safely grabs the IP of the microservice.
+
+    :returns:
+        - **response** (*dict*): Server response.
+        - **status** (*int*): Server response HTTP status code.
+    """
+
+    # Handles and safely returns result.
+    return await handle(get_ip)
+
+
+async def exchange_info(request):
+    """ Safely grabs the exchange information.
+
+    Args:
+        request (str): The request sent into the server.
+
+    :returns:
+        - **response** (*dict*): Server response.
+        - **status** (*int*): Server response HTTP status code.
+    """
+
+    # In this case the request sent is the exchange's name.
+    exchange = request
+
+    try:
+        # Opening ccxt exchange instance with async support.
         ex = getattr(ccxt_async, exchange)()
     except AttributeError:
         return (
-            False,
-            400,
             {
                 "error": "exchange_error",
                 "description": "Exchange {} not found. Please check the exchange is supported with ccxt.".format(
                     exchange
                 ),
             },
+            400,  # Bad Request
         )
 
-    # Closing connection with the market.
+    # Closing connection with the exchange.
     await ex.close()
 
-    return True, None, None
+    # Handles and safely returns result.
+    return await handle(get_exchange_info, exchange=exchange)
 
 
-async def check_historical_data(request):
-    """ Verify json request for /api/v1/cryptobook/historical endpoint.
+async def historical_data(request):
+    """ Safely grabs historical data.
 
     Args:
         request (dict): The request sent into the server.
 
     :returns:
-        - **valid_request** (*bool*): Boolean representing whether or not check was successfull or failure.
-        - **status** (*int*): HTTP code corresponding to the data validation. None if return bool above is true.
-        - **response** (*dict*): The response by the validator; details about an error.
+        - **response** (*dict*): Server response.
+        - **status** (*int*): Server response HTTP status code.
     """
-
-    # @todo Add validation for fetchOHLCV function.
-    # @description Due to the nature of some exchanges, their reply is not always historical. Therefore, there needs to be a manner in which the verifier checks to ensure the market will _only_ return the proper historical data asked by the user.
 
     # Creates the validator class and schema to check the requests' params.
     v = Validator()
@@ -65,13 +99,12 @@ async def check_historical_data(request):
     # Checks to make sure the request has the proper keys.
     if not v.validate(request):
         return (
-            False,
-            400,
             {
                 "error": "invalid_request",
                 "description": "The server received the request, but the request was invalid.",
                 "keys": v.errors,
             },
+            400,
         )
 
     # Settings variables that will be checked by ccxt exchange params below.
@@ -84,34 +117,30 @@ async def check_historical_data(request):
         ex = getattr(ccxt_async, exchange)()
     except AttributeError:
         return (
-            False,
-            400,
             {
                 "error": "exchange_error",
                 "description": "Exchange {} not found. Please check the exchange is supported.".format(
                     exchange
                 ),
             },
+            400,
         )
 
     # Checks if fetching of historical data for the specific exchange is allowed.
     if ex.has["fetchOHLCV"] != True:
         return (
-            False,
-            400,
             {
                 "error": "historical_error",
                 "description": "{} does not support fetching OHLC data. Please use another exchange".format(
                     exchange
                 ),
             },
+            400,
         )
 
     # Checks to see if the timeframe is available.
     if (not hasattr(ex, "timeframes")) or (timeframe not in ex.timeframes):
         return (
-            False,
-            400,
             {
                 "error": "timeframe_error",
                 "description": "The requested timeframe ({}) is not available from {}.".format(
@@ -119,6 +148,7 @@ async def check_historical_data(request):
                 ),
                 "timeframes": ex.timeframes.keys(),
             },
+            400,
         )
 
     # Loads the market for the symbols.
@@ -127,8 +157,6 @@ async def check_historical_data(request):
     # Check to see if the symbol is available on the exchange.
     if symbol not in ex.symbols:
         return (
-            False,
-            400,
             {
                 "error": "symbol_error",
                 "description": "The requested symbol ({}) is not available from {}.".format(
@@ -136,10 +164,11 @@ async def check_historical_data(request):
                 ),
                 "symbols": ex.symbols,
             },
+            400,
         )
 
     # Closing connection with the market.
     await ex.close()
 
-    # Returns true if all the checks passes with the loaded exchange.
-    return True, None, None
+    # Handles and safely returns result.
+    return await handle(get_historical_data, **request)
