@@ -6,6 +6,26 @@ from datetime import datetime
 import ccxt.async_support as ccxt_async
 
 
+async def handle(func, *args, **kwargs):
+    """ Function to handle internal server errors.
+
+        args:
+            func (function): Function that will be called safely.
+            *args: Unnamed variables to be called by func.
+            **kwargs: Named variables to be called by func.
+    """
+
+    try:
+        resp = await func(*args, **kwargs)
+    except ExchangeDataAccuracyError as e:
+        return {"error": "exchange_data_accuracy_error", "description": str(e)}, 400
+    except NetworkError as e:  # pragma: no cover
+        return {"error": "network_error", "description": str(e)}, 400
+    except Exception as e:  # pragma: no cover
+        return {"error": "server_error", "description": str(e)}, 400
+    return resp, 200
+
+
 async def ip():
     """  Safely grabs the IP of the microservice.
 
@@ -14,12 +34,8 @@ async def ip():
         - **status** (*int*): Server response HTTP status code.
     """
 
-    try:
-        resp = await get_ip()
-    except Exception as e:  # pragma: no cover
-        return {"error": "server_error", "description": str(e)}, 400
-
-    return resp, 200
+    # Handles and safely returns result.
+    return await handle(get_ip)
 
 
 async def exchange_info(request):
@@ -37,6 +53,7 @@ async def exchange_info(request):
     exchange = request
 
     try:
+        # Opening ccxt exchange instance with async support.
         ex = getattr(ccxt_async, exchange)()
     except AttributeError:
         return (
@@ -49,19 +66,11 @@ async def exchange_info(request):
             400,  # Bad Request
         )
 
-    # Closing connection with the market.
+    # Closing connection with the exchange.
     await ex.close()
 
-    # Attempts to get the request.
-    try:
-        resp = await get_exchange_info(exchange=exchange)
-    except NetworkError as e:  # pragma: no cover
-        return {"error": "network_error", "description": str(e)}, 400
-    except Exception as e:  # pragma: no cover
-        return {"error": "server_error", "description": str(e)}, 400
-
-    # Returns the request.
-    return resp, 200
+    # Handles and safely returns result.
+    return await handle(get_exchange_info, exchange=exchange)
 
 
 async def historical_data(request):
@@ -161,15 +170,5 @@ async def historical_data(request):
     # Closing connection with the market.
     await ex.close()
 
-    # Attempts to get the request.
-    try:
-        resp = await get_historical_data(**request)
-    except ExchangeDataAccuracyError as e:
-        return {"error": "exchange_data_accuracy_error", "description": str(e)}, 400
-    except NetworkError as e:  # pragma: no cover
-        return {"error": "network_error", "description": str(e)}, 400
-    except Exception as e:  # pragma: no cover
-        return {"error": "server_error", "description": str(e)}, 400
-
-    # Returns true if all the checks passes with the loaded exchange.
-    return resp, 200
+    # Handles and safely returns result.
+    return await handle(get_historical_data, **request)
