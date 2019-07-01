@@ -85,13 +85,6 @@ async def get_historical_data(exchange, symbol, timeframe, start, end, cfbypass=
                 "trust_env": True,
             }
         )
-
-        # Sets cookies and user agent for CloudFlare bypass.
-        tokens, user_agent = cfscrape.get_tokens(ex.urls["www"])
-        ex.headers = {
-            "cookie": "; ".join([key + "=" + tokens[key] for key in tokens]),
-            "user-agent": user_agent,
-        }
     else:
         # Creates asyhronous ccxt instance.
         ex = getattr(ccxt_async, exchange)(
