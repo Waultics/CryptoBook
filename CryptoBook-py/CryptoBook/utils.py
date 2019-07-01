@@ -17,7 +17,9 @@ async def get_ip():
         async with session.get(
             "https://api.ipify.org?format=json", ssl=False
         ) as response:
-            return await response.read()
+            resp = await response.read()
+
+        return {"ip": resp}
 
 
 async def get_exchange_info(exchange):
