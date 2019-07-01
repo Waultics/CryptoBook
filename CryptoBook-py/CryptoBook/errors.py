@@ -1,10 +1,10 @@
-class HistoricalData(BaseException):
-    """ General error for the historical data method in utils. """
+class CryptoBookError(BaseException):
+    """ General error for Cryptobook. """
 
 
-class ExchangeDataAccuracyError(HistoricalData):
+class ExchangeDataAccuracyError(CryptoBookError):
     """ The exchange responded with innacurate data than those originally requested. """
 
 
-class NetworkError(HistoricalData):
+class NetworkError(CryptoBookError):
     """ Unable to properly load the resource due to network error. """
