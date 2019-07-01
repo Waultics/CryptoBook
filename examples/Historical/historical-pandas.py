@@ -7,11 +7,14 @@ data = {
     "exchange": "binance",
     "symbol": "ETH/BTC",
     "timeframe": "1h",
-    "start": "2018-01-01 00:00:00",
-    "end": "2018-01-02 00:00:00",
+    "start": "2017-06-01 00:00:00",
+    "end": "2019-01-01 00:00:00",
     "cfbypass": False,  # Optional flag if exchange uses CloudFlare.
 }
 request_before = datetime.now()
+
+# Printing information about day start-end.
+print(f"Gathering data from {data['start']} to {data['end']}.")
 
 # Sends a request to the server with the data provided above.
 r = requests.post(
@@ -31,6 +34,10 @@ try:
 
     # Prints the DataFrame.
     print(df.to_string())
+
+    # Print information about the DataFrame.
+    print("First day in the DataFrame: ", df.iloc[0]["Time"])
+    print("Last day in the DataFrame: ", df.iloc[-1]["Time"])
 
     # Printing time resource.
     print("Request time: ", (request_after - request_before).total_seconds())
