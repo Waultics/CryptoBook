@@ -14,8 +14,10 @@ async def get_ip():
 
     # Grabs external IP address from ipify.org.
     async with aiohttp.ClientSession(trust_env=True) as session:
-        async with session.get("https://api.ipify.org?format=json") as response:
-            return await response.json()
+        async with session.get(
+            "https://api.ipify.org?format=json", ssl=False
+        ) as response:
+            return await response.read()
 
 
 async def get_exchange_info(exchange):
@@ -91,7 +93,7 @@ async def get_historical_data(exchange, symbol, timeframe, start, end, cfbypass=
     else:
         # Creates asyhronous ccxt instance.
         ex = getattr(ccxt_async, exchange)(
-            {"enableRateLimit": False, "verify": False, "trust_env_aiohttp": True}
+            {"enableRateLimit": False, "verify": False, "aiohttp_trust_env": True}
         )
 
     # Configuration settings for the DataFrame.
