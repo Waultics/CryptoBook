@@ -33,4 +33,4 @@ COPY CryptoBook-py/CryptoBook/ ./CryptoBook
 RUN pip install --no-cache-dir -r base.txt
 
 # Runs the API when the container is ran.
-CMD [ "python", "CryptoBook/api.py" ]
+CMD [ "python", "CryptoBook/app.py" ]

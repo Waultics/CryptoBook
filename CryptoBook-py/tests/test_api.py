@@ -16,13 +16,6 @@ def application(loop, app, sanic_client):
     return loop.run_until_complete(sanic_client(app))
 
 
-def test_load_config():
-    """ Test the load_config() function to ensure that config.yml file gets loaded. """
-    host, port = api.load_config()
-    assert type(host) == str
-    assert type(port) == int
-
-
 class Test_get_ip(object):
     """ Tests the function api_get_ip_get for response status, and response json. """
 

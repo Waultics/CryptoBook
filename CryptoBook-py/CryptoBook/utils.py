@@ -14,8 +14,12 @@ async def get_ip():
 
     # Grabs external IP address from ipify.org.
     async with aiohttp.ClientSession(trust_env=True) as session:
-        async with session.get("https://api.ipify.org?format=json") as response:
-            return await response.json()
+        async with session.get(
+            "https://api.ipify.org?format=json", ssl=False
+        ) as response:
+            resp = await response.read()
+
+        return {"ip": resp}
 
 
 async def get_exchange_info(exchange):
@@ -79,19 +83,18 @@ async def get_historical_data(exchange, symbol, timeframe, start, end, cfbypass=
                 "enableRateLimit": False,
                 "verify": False,
                 "trust_env": True,
+                "timeout": 60000,
             }
         )
-
-        # Sets cookies and user agent for CloudFlare bypass.
-        tokens, user_agent = cfscrape.get_tokens(ex.urls["www"])
-        ex.headers = {
-            "cookie": "; ".join([key + "=" + tokens[key] for key in tokens]),
-            "user-agent": user_agent,
-        }
     else:
         # Creates asyhronous ccxt instance.
         ex = getattr(ccxt_async, exchange)(
-            {"enableRateLimit": False, "verify": False, "trust_env_aiohttp": True}
+            {
+                "enableRateLimit": False,
+                "verify": False,
+                "aiohttp_trust_env": True,
+                "timeout": 60000,
+            }
         )
 
     # Configuration settings for the DataFrame.
@@ -112,6 +115,7 @@ async def get_historical_data(exchange, symbol, timeframe, start, end, cfbypass=
         else:
             resp_first = await ex.fetch_ohlcv(symbol, timeframe, time_start)
     except ccxt.NetworkError as e:  # pragma: no cover
+        await ex.close()
         raise NetworkError("Error loading the data. {}".format(e))
 
     # The interval of data in which the market is replying by.
@@ -138,7 +142,11 @@ async def get_historical_data(exchange, symbol, timeframe, start, end, cfbypass=
                 *[ex.fetch_ohlcv(symbol, timeframe, time) for time in times]
             )
     except ccxt.NetworkError as e:  # pragma: no cover
+        await ex.close()
         raise NetworkError("Error loading the data. {}".format(e))
+    except Exception as e:  # pragma: no cover
+        await ex.close()
+        raise Exception("Unknown error occured. {}".format(e))
 
     # Appends all of our results to the DataFrame.
     dataframes = [pd.DataFrame(data=response, columns=header) for response in responses]
