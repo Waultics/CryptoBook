@@ -1,10 +1,11 @@
-from api import app
-
-import urllib3
-import yaml
-
 if __name__ == "__main__":  # pragma: no cover
     """ Boot-ups the CryptoBook server."""
+
+    # Importing in here for no coverage.
+    from api import app
+    import urllib3
+    import yaml
+
     # Removes urlib3 warnings.
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     # Loads the configuration file.
