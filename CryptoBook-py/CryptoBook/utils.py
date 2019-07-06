@@ -39,12 +39,7 @@ async def get_exchange_info(exchange):
     await ex.load_markets()
 
     # Gathers market data.
-    data = {
-        "exchange": exchange,
-        "symbols": ex.symbols,
-        "timeframes": ex.timeframes,
-        "historical": ex.has["fetchOHLCV"],
-    }
+    data = ex.describe()
 
     # Closes the market connection due to async ccxt.
     await ex.close()
