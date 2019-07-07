@@ -21,23 +21,24 @@ import socketio
 import pprint
 
 pp = pprint.PrettyPrinter(indent=2)
+namespace = '/api/v1/real_time'
 
 sio = socketio.Client()
 
-@sio.on('response')
+@sio.on('response', namespace=namespace)
 def my_event(data):
     pp.pprint(data)
 
-@sio.event
+@sio.event(namespace=namespace)
 def connect():
     print("CONNECTED")
 
-@sio.event
+@sio.event(namespace=namespace)
 def disconnect():
     print("DISCONNECTED")
 
 
-sio.connect('http://0.0.0.0:5050')
+sio.connect('http://0.0.0.0:5050/api/v1/real_time')
 
 subscription = ['5~CCCAGG~BTC~USD', '5~CCCAGG~ETH~USD']
-sio.emit('subscribe', subscription)
+sio.emit('subscribe', subscription, namespace=namespace)
