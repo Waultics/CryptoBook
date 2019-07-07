@@ -35,9 +35,9 @@ class Test_exchange_info(object):
         resp = await application.get("/api/v1/cryptobook/exchange/binance")
         resp_json = await resp.json()
         assert resp.status == 200
-        assert resp_json.keys() == set(
-            ["exchange", "symbols", "timeframes", "historical"]
-        )
+        assert set(
+            ["exchange", "timeframes", "fees", "id", "name", "symbols"]
+        ).issubset(resp_json.keys())
 
     async def test_inproper_input(self, application):
         """ Checks invalid response is correctly replied to. """
