@@ -40,6 +40,8 @@ async def get_exchange_info(exchange):
 
     # Gathers market data.
     data = ex.describe()
+    data["exchange"] = exchange
+    data["symbols"] = ex.symbols
 
     # Closes the market connection due to async ccxt.
     await ex.close()
